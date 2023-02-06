@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b244cb484ac69a44db70619c00302c5d, type: 3}
+  m_Name: Timer_System
+  m_EditorClassIdentifier: 
+  initializeTimerCommand: {fileID: 11400000, guid: 2b1a81d897cbe5b44a30b15a0b3720af,
+    type: 2}
+  pauseTimerCommand: {fileID: 11400000, guid: 2720c840a3283ee499a21b536101b4ad, type: 2}
+  runTimerCommand: {fileID: 11400000, guid: a74af04bb4e41a24a8c160cabf5e2364, type: 2}
+  stopTimerCommand: {fileID: 11400000, guid: 07b62be1b97bca74d91d1260c32d9e57, type: 2}
