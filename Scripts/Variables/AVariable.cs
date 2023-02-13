@@ -2,7 +2,6 @@ using System;
 using MECS.Tools;
 using UnityEngine;
 using UnityEngine.Events;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Variables
 {
@@ -42,14 +41,8 @@ namespace MECS.Variables
         //Method, set value from another variable
         public virtual void SetValue(AVariable<T> variable)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation =
-            new BasicDebugInformation(this.GetType().ToString(), "AVariable<T> variable");
-            string variableName = this.name;
-
             //Check value
-            bool isValidVariable = ReferenceTools.IsVariableSafe(variable,
-            new ComplexDebugInformation(basicDebugInformation, "given variable to" + this.name + " isn't valid."));
+            bool isValidVariable = ReferenceTools.IsVariableSafe(variable, " given variable to" + this.name + " isn't valid.");
 
             //Set value
             if (isValidVariable)
@@ -63,14 +56,8 @@ namespace MECS.Variables
         //Method, set value
         public virtual void SetValue(T value)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation =
-            new BasicDebugInformation(this.GetType().ToString(), "SetValue(T value)");
-            string variableName = this.name;
-
             //Check value
-            bool isValidVariable = ReferenceTools.IsValueSafe(value,
-            new ComplexDebugInformation(basicDebugInformation, "given variable to" + this.name + " isn't valid."));
+            bool isValidVariable = ReferenceTools.IsValueSafe(value, " given variable to" + this.name + " isn't valid.");
 
             //Set value
             if (isValidVariable)

@@ -1,102 +1,24 @@
 using System.Collections.Generic;
+using System.Diagnostics;
+using MECS.Patrons.Commands;
 using MECS.Tools;
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Collections
 {
     //* Executions related to array operations
     public class ArrayTools
     {
-        #region NOT_SAFE_OPERATIONS
-        //Check if values inside the array and array are correct or valid
+        #region ARRAY_CONTENT_ITERATION
+        //Method, check if values inside the array and array are correct or valid and notify errors
         // T = array type
-        public bool IsArraySafe<T>(T[] array, BasicDebugInformation debugInformation)
+        public bool IsArrayContentSafe<T>(T[] array, string debugMessage)
         {
             //Value to return
-            bool areValuesSafe = ReferenceTools.IsValueSafe(array, debugInformation);
+            bool isArraySafe = true;
 
             //Avoid null array
-            if (areValuesSafe)
-            {
-                //Avoid 0 size
-                if (array.Length != 0)
-                {
-                    //Itinerate array and check values
-                    foreach (var value in array)
-                        //Check value
-                        if (!ReferenceTools.IsValueSafe(value, debugInformation))
-                        {
-                            areValuesSafe = false;
-                            break;
-                        }
-                }
-                //0 length arrays aren't safe
-                else
-                {
-                    areValuesSafe = false;
-#if UNITY_EDITOR
-                    DebugTools.DebugError(debugInformation);
-#endif
-                }
-            }
-
-            return areValuesSafe;
-        }
-
-        //Check if values inside the array and array are correct or valid
-        // T = array type
-        public bool IsArraySafe<T>(T[] array)
-        {
-            //Value to return
-            bool areValuesSafe = ReferenceTools.IsValueSafe(array);
-
-            //Avoid null array
-            if (areValuesSafe)
-            {
-                //Avoid 0 size
-                if (array.Length > 0)
-                {
-                    //Itinerate array and check values
-                    foreach (var value in array)
-                        //Check value
-                        if (!ReferenceTools.IsValueSafe(value))
-                        {
-                            areValuesSafe = false;
-                            break;
-                        }
-                }
-                else
-                    areValuesSafe = false;
-            }
-
-            return areValuesSafe;
-        }
-        #endregion
-        #region SAFE_OPERATIONS
-        //Check if values inside the array and array are correct or valid
-        // T = array type
-        public bool IsArrayContentSafe<T>(T[] array, ComplexDebugInformation complexDebugInformation)
-        {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-            "IsArraySafe<T>(T[] array, ComplexDebugInformation complexDebugInformation)");
-
-            //Value to return
-            bool areParametersSafe =
-                //Check array reference
-                ReferenceTools.IsValueSafe(array, new ComplexDebugInformation(basicDebugInformation,
-                "array reference isn't safe"))
-
-                //Check complexDebugInformation reference
-                && ReferenceTools.IsValueSafe(complexDebugInformation, new ComplexDebugInformation(basicDebugInformation,
-                "complexDebugInformation reference isn't safe")),
-
-                //Return value
-                isArraySafe = true;
-
-            //Avoid null array
-            if (areParametersSafe)
+            if (ReferenceTools.IsValueSafe(array, debugMessage + " given array isn't safe"))
             {
                 //Check length
                 isArraySafe = array.Length > 0 ? true : false;
@@ -107,36 +29,62 @@ namespace MECS.Collections
                     //Itinerate array and check values
                     foreach (var value in array)
                         //Check value
-                        if (!ReferenceTools.IsValueSafe(value, complexDebugInformation.AddCustomText("value on given array isn't safe")))
+                        if (!ReferenceTools.IsValueSafe(value, debugMessage + " value on array isn't safe"))
                         {
                             isArraySafe = false;
                             break;
                         }
                 }
-                //0 length arrays aren't safe
+                //0 length arrays aren't safe, notify debug manager
                 else
-                    DebugTools.DebugError(complexDebugInformation.AddCustomText("given array hasn't values"));
+                    new NotificationCommand<DebugArgs>(this,
+                        new DebugArgs(debugMessage + " given array have 0 values", LogType.Error, new StackTrace(true))).Execute();
             }
 
             return isArraySafe;
         }
 
-        //Check if a element is inside of given array
-        // T = object target type
-        public bool HasArrayObject<T>(T[] array, T value, ComplexDebugInformation complexDebugInformation)
+        //Method, check if values inside the array and array are correct or valid
+        // T = array type
+        public bool IsArrayContentSafe<T>(T[] array)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name, "HasArrayObject<T>(T[] array, T value, "
-            + "ComplexDebugInformation complexDebugInformation");
+            //Value to return
+            bool isArraySafe = true;
 
+            //Avoid null array
+            if (ReferenceTools.IsValueSafe(array, " given array isn't safe"))
+            {
+                //Check length
+                isArraySafe = array.Length > 0 ? true : false;
+
+                //Avoid 0 size
+                if (isArraySafe)
+                {
+                    //Itinerate array and check values
+                    foreach (var value in array)
+                        //Check value
+                        if (!ReferenceTools.IsValueSafe(value))
+                        {
+                            isArraySafe = false;
+                            break;
+                        }
+                }
+            }
+
+            return isArraySafe;
+        }
+
+        //Method, check if a element is inside of given array and debug if not
+        // T = object target type
+        public bool HasArrayObject<T>(T[] array, T value, string debugMessage)
+        {
             //Check parameters before execution
             bool areParametersSafe =
             //Check array reference
-            IsArrayContentSafe(array, new ComplexDebugInformation(basicDebugInformation, "given array isn't safe"))
+            IsArrayContentSafe(array, debugMessage + " given array isn't safe")
 
             //Check value and debug values
-            && ReferenceTools.AreValuesSafe(new object[] { value, complexDebugInformation },
-                new ComplexDebugInformation(basicDebugInformation, "given parameters aren't safe")),
+            && ReferenceTools.IsValueSafe(value, debugMessage + " given value to search isn't safe"),
 
             //Return value
             hasArrayObject = false;
@@ -149,28 +97,27 @@ namespace MECS.Collections
                     if (arrayValue.Equals(arrayValue))
                         hasArrayObject = true;
 
-                //Debug if doesnt find value
+                //Notify debug manager
                 if (!hasArrayObject)
-                    DebugTools.DebugError(complexDebugInformation.AddTempCustomText("given array doesnt contains target value"));
+                    new NotificationCommand<DebugArgs>(this,
+                    new DebugArgs(debugMessage + " given array doesnt contains target value", LogType.Error, new StackTrace(true)))
+                    .Execute();
             }
 
             return hasArrayObject;
         }
 
-        //Check if a element is inside of given array
+        //Method, check if a element is inside of given array
         // T = object target type
         public bool HasArrayObject<T>(T[] array, T value)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name, "HasArrayObject<T>(T[] array, T value)");
-
             //Check parameters before execution
             bool areParametersSafe =
             //Check array reference
-            IsArrayContentSafe(array, new ComplexDebugInformation(basicDebugInformation, "given array isn't safe"))
+            IsArrayContentSafe(array, " given array content to itinerate isn't safe")
 
             //Check value
-            && ReferenceTools.IsValueSafe(value, new ComplexDebugInformation(basicDebugInformation, "given value isn't safe")),
+            && ReferenceTools.IsValueSafe(value, " given value to check on array isn't safe"),
 
             //Return value
             hasArrayObject = false;
@@ -187,26 +134,20 @@ namespace MECS.Collections
 
             return hasArrayObject;
         }
+        #endregion
 
-        //Convert given array to given type and return value
+        //Method, convert given array to given type and return value
         // T = original array type
         // T2 = final array type
-        public bool ConvertArrayToType<T, T2>(T[] originalArray, out T2[] finalArray,
-        ComplexDebugInformation complexDebugInformation)
+        public bool ConvertArrayToType<T, T2>(T[] originalArray, out T2[] finalArray, string debugMessage)
         {
             //Set default value on out
             finalArray = default;
 
-            //Debug information
-            BasicDebugInformation basicDebugInformation =
-            new BasicDebugInformation("CollectionsTools", "ConvertArrayToType<T, T2>(T[] originalArray, out T2[] finalArray," +
-            "ComplexDebugInformation complexDebugInformation");
-
             //Check parameters values
             bool areParametersValid =
             //Check original array
-            IsArrayContentSafe(originalArray, new ComplexDebugInformation(basicDebugInformation,
-            "given array isn't safe"));
+            IsArrayContentSafe(originalArray, debugMessage + " given array to convert isn't safe");
 
             //Continue execution if can
             if (areParametersValid)
@@ -218,7 +159,7 @@ namespace MECS.Collections
                 foreach (T value in originalArray)
                     //Try to convert
                     if (TypeTools.ConvertToType<T2>(value, out T2 newTypeValue,
-                    complexDebugInformation.AddTempCustomText("couldnt convert value from given array")))
+                    debugMessage + "couldnt convert value from given array"))
                         tempFinalArrayList.Add(newTypeValue);
                     //Break iteration
                     else
@@ -235,14 +176,10 @@ namespace MECS.Collections
             return areParametersValid;
         }
 
-        //Add value to given array and return it
+        //Method, add value to given array and return it
         //T = array type
-        public bool AddValue<T>(T[] array, T value, out T[] outArray, ComplexDebugInformation complexDebugInformation)
+        public bool AddValue<T>(T[] array, T value, out T[] outArray, string debugMessage)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-            "AddValue<T>(T[] array, T value, ComplexDebugInformation complexDebugInformation)");
-
             //Set out value
             outArray = null;
 
@@ -250,8 +187,7 @@ namespace MECS.Collections
             bool couldAdd = false;
 
             //Execute if parameters are correct
-            if (ReferenceTools.AreValuesSafe(new object[] { array, value, complexDebugInformation },
-            new ComplexDebugInformation(basicDebugInformation, "given parameters aren't safe")))
+            if (IsArrayContentSafe(new object[] { array, value }, debugMessage + " given parameters aren't safe"))
             {
                 //Create list to store array
                 List<T> list = new();
@@ -261,7 +197,7 @@ namespace MECS.Collections
                 {
                     //Array value to list
                     couldAdd = CollectionsTools.listTools.AddValue(list, value,
-                    complexDebugInformation.AddTempCustomText("couldnt add value to temporal list"));
+                        debugMessage + " couldnt add value to temporal list");
 
                     return list.ToArray();
                 }
@@ -271,7 +207,7 @@ namespace MECS.Collections
                 {
                     //Try to add array to list with current content
                     if (CollectionsTools.listTools.AddRange(list, array,
-                        complexDebugInformation.AddTempCustomText("couldnt add array value to temporal list")))
+                        debugMessage + " couldnt add array range value to temporal list"))
                         outArray = GetNewArray();
                 }
                 //Add value
@@ -281,6 +217,5 @@ namespace MECS.Collections
 
             return couldAdd;
         }
-        #endregion
     }
 }

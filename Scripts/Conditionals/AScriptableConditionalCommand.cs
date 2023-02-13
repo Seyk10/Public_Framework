@@ -20,7 +20,8 @@ namespace MECS.Conditionals
         //AScriptableParameterCommand, notify use of conditional command
         public override void Execute(ConditionalComponent parameter)
         {
-            ExecuteCommandEvent?.Invoke(this, new ScriptableConditionalArgs<T>(value, parameter));
+            ExecuteCommandEvent?.Invoke(this, new ScriptableConditionalArgs<T>(value, parameter,
+            " couldnt execute conditional command"));
 
             //AScriptableParameterCommand, base execution
             base.Execute(parameter);

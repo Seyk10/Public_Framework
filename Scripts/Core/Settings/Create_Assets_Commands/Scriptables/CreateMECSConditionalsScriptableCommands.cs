@@ -15,11 +15,6 @@ namespace MECS.Core
     public class CreateMECSConditionalsScriptableCommands : ACreateMECSScriptableObjectCommand,
     ICommandReturn<Dictionary<string, ScriptableObject>>
     {
-        //ICommandReturn, base builder
-        public CreateMECSConditionalsScriptableCommands(ComplexDebugInformation complexDebugInformation) :
-        base(complexDebugInformation)
-        { }
-
         //ICommandReturn, notify end of command
         public event EventHandler<Dictionary<string, ScriptableObject>> CommandFinishedEvent = null;
 
@@ -41,25 +36,17 @@ namespace MECS.Core
             //Create check conditional asset
             bool couldntCreateAssets = CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.CHECK_CONDITIONALS_COMMAND_NAME,
             new CreatePersistentScriptableObjectCommand<CheckConditionalsCommand>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.CHECK_CONDITIONALS_COMMAND_NAME),
-            path, assetsNaming.CHECK_CONDITIONALS_COMMAND_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.CHECK_CONDITIONALS_COMMAND_NAME).Execute())
 
             //Create set false boolean asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.SET_FALSE_BOOLEAN_CONDITIONAL_COMMAND_NAME,
             new CreatePersistentScriptableObjectCommand<ScriptableSetBooleanConditionalCommand>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.SET_FALSE_BOOLEAN_CONDITIONAL_COMMAND_NAME),
-            path, assetsNaming.SET_FALSE_BOOLEAN_CONDITIONAL_COMMAND_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.SET_FALSE_BOOLEAN_CONDITIONAL_COMMAND_NAME).Execute())
 
             //Create set true boolean asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.SET_TRUE_BOOLEAN_CONDITIONAL_COMMAND_NAME,
             new CreatePersistentScriptableObjectCommand<ScriptableSetBooleanConditionalCommand>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.SET_TRUE_BOOLEAN_CONDITIONAL_COMMAND_NAME),
-            path, assetsNaming.SET_TRUE_BOOLEAN_CONDITIONAL_COMMAND_NAME).Execute(),
-            complexDebugInformation);
+            (path, assetsNaming.SET_TRUE_BOOLEAN_CONDITIONAL_COMMAND_NAME).Execute());
 
             //Set on final dictionary values
             if (couldntCreateAssets)

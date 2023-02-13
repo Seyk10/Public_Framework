@@ -1,5 +1,4 @@
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Timers
 {
@@ -7,8 +6,7 @@ namespace MECS.Timers
     public class StopTimerState : ATimerState
     {
         //Default builder
-        public StopTimerState(MonoBehaviour monoBehaviour, ITimerData data, ComplexDebugInformation complexDataInformation)
-        : base(monoBehaviour, data, complexDataInformation) { }
+        public StopTimerState(MonoBehaviour monoBehaviour, ITimerData data) : base(monoBehaviour, data) { }
 
         //ATimerState, execute command
         public override void RunState()

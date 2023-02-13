@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using MECS.Collections;
-using MECS.MemoryManagement;
 using MECS.MemoryManagement.Entity.Pooling;
 using MECS.Patrons.Commands;
 using MECS.Tools;
@@ -16,11 +15,6 @@ namespace MECS.Core
     public class CreateMECSAddresablePooledScriptableCommands : ACreateMECSScriptableObjectCommand,
     ICommandReturn<Dictionary<string, ScriptableObject>>
     {
-        //ACreateMECSScriptableObjectCommand, default builder
-        public CreateMECSAddresablePooledScriptableCommands(DebugTools.ComplexDebugInformation complexDebugInformation) :
-        base(complexDebugInformation)
-        { }
-
         //ICommandReturn, notify end of command
         public event EventHandler<Dictionary<string, ScriptableObject>> CommandFinishedEvent = null;
 
@@ -42,17 +36,12 @@ namespace MECS.Core
             //Create initialize pool asset
             bool couldntCreateAssets = CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.INITIALIZE_POOL_COMMAND_NAME,
             new CreatePersistentScriptableObjectCommand<InitializePoolCommand>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.INITIALIZE_POOL_COMMAND_NAME),
-            path, assetsNaming.INITIALIZE_POOL_COMMAND_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.INITIALIZE_POOL_COMMAND_NAME).Execute())
 
             //Create return pooled asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.RETURN_POOLED_ENTITY_COMMAND_NAME,
             new CreatePersistentScriptableObjectCommand<ReturnPooledEntityCommand>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.RETURN_POOLED_ENTITY_COMMAND_NAME),
-            path, assetsNaming.RETURN_POOLED_ENTITY_COMMAND_NAME).Execute(),
-            complexDebugInformation);
+            (path, assetsNaming.RETURN_POOLED_ENTITY_COMMAND_NAME).Execute());
 
             //Set on final dictionary values
             if (couldntCreateAssets)

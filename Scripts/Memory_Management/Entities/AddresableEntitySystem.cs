@@ -4,8 +4,8 @@ using MECS.Core;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using MECS.Collections;
-using static MECS.Tools.DebugTools;
 using MECS.Tools;
+using MECS.Patrons.Commands;
 
 namespace MECS.MemoryManagement.Entity
 {
@@ -85,176 +85,171 @@ namespace MECS.MemoryManagement.Entity
         //Instantiate loaded operations
         private void OnAssetLoadedResponse(object sender, LoadedAssetReferenceArgs<GameObject> args)
         {
-            //Variables
-            GameObjectAddressablesLoader gameObjectAddressablesLoader =
-                (GameObjectAddressablesLoader)sender;
-
-            //Avoid errors
-            if (loadingProcessDictionary.ContainsKey(gameObjectAddressablesLoader))
+            //Check parameters
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given parameters aren't safe"))
             {
                 //Variables
-                //Remove subscription if this is the last loading process with this loader
-                bool removeSubscription =
-                    loadingProcessDictionary[gameObjectAddressablesLoader].Count == 1;
-                Transform spawnPosition = loadingProcessDictionary[
-                    gameObjectAddressablesLoader
-                ].Dequeue();
+                GameObjectAddressablesLoader gameObjectAddressablesLoader =
+                    (GameObjectAddressablesLoader)sender;
 
-                //Local method, remove subscription from loader and remove from dictionary
-                void CheckRemoveLoader()
+                //Avoid errors
+                if (loadingProcessDictionary.ContainsKey(gameObjectAddressablesLoader))
                 {
-                    //Check if can remove
-                    if (removeSubscription)
+                    //Variables
+                    //Remove subscription if this is the last loading process with this loader
+                    bool removeSubscription =
+                        loadingProcessDictionary[gameObjectAddressablesLoader].Count == 1;
+                    Transform spawnPosition = loadingProcessDictionary[
+                        gameObjectAddressablesLoader
+                    ].Dequeue();
+
+                    //Local method, remove subscription from loader and remove from dictionary
+                    void CheckRemoveLoader()
                     {
-                        loadingProcessDictionary.Remove(gameObjectAddressablesLoader);
-                        gameObjectAddressablesLoader.LoadedAssetReferenceEvent -=
-                            OnAssetLoadedResponse;
+                        //Check if can remove
+                        if (removeSubscription)
+                        {
+                            loadingProcessDictionary.Remove(gameObjectAddressablesLoader);
+                            gameObjectAddressablesLoader.LoadedAssetReferenceEvent -=
+                                OnAssetLoadedResponse;
+                        }
                     }
-                }
 
-                //Local method, instantiate a new entity with operation result
-                void InstantiateNewEntity()
-                {
-                    //Only process response if load is valid
-                    if (args.asyncOperationHandle.IsValid())
+                    //Local method, instantiate a new entity with operation result
+                    void InstantiateNewEntity()
                     {
-                        //Store new entity
-                        GameObject newAddresableEntity = Instantiate(args.asyncOperationHandle.Result);
-
-                        //Local method, set entity values
-                        void SetEntityValues(AddresableEntityComponent component)
+                        //Only process response if load is valid
+                        if (args.asyncOperationHandle.IsValid())
                         {
-                            //Store value from component
-                            AddresableEntityData[] arrayData = component.DataReference.GetValue();
+                            //Store new entity
+                            GameObject newAddresableEntity = Instantiate(args.asyncOperationHandle.Result);
 
-                            //Convert value to list
-                            List<AddresableEntityData> componentDataList =
-                                arrayData != null ? arrayData.ToList() : new();
+                            //Local method, set entity values
+                            void SetEntityValues(AddresableEntityComponent component)
+                            {
+                                //Store value from component
+                                AddresableEntityData[] arrayData = component.Data;
 
-                            componentDataList.Add(
-                                new AddresableEntityData(
-                                    args.assetReference,
-                                    gameObjectAddressablesLoader,
-                                    newAddresableEntity
-                                )
-                            );
+                                //Convert value to list
+                                List<AddresableEntityData> componentDataList =
+                                    arrayData != null ? arrayData.ToList() : new();
 
-                            //Set new data
-                            if (component.DataReference.useLocalValues)
-                                component.DataReference.localValue = componentDataList.ToArray();
-                            else
-                                component.DataReference.externalValue.Data =
-                                    componentDataList.ToArray();
-
-                            //Set transform values to new instance
-                            newAddresableEntity.transform.position = spawnPosition
-                                .transform
-                                .position;
-                            newAddresableEntity.transform.rotation = spawnPosition
-                                .transform
-                                .rotation;
-                        }
-
-                        //Set component values
-                        if (
-                            newAddresableEntity.TryGetComponent(
-                                out AddresableEntityComponent component
-                            )
-                        )
-                            SetEntityValues(component);
-                        else
-                        {
-                            component =
-                                newAddresableEntity.AddComponent<AddresableEntityComponent>();
-                            SetEntityValues(component);
-                        }
-
-                        //! Check if pooled object
-                        //And release resource
-                        //Store data to work with
-                        //Local method, release resource on data
-                        void ReleaseDataResources()
-                        {
-                            AddresableEntityData[] dataArray = component.DataReference.GetValue();
-
-                            bool canUnload = true;
-
-                            //Avoid instances created without loader
-                            foreach (var data in dataArray)
-                                if (data.IResourceLoader == null)
-                                {
-                                    canUnload = false;
-                                    break;
-                                }
-
-                            //Unload asset reference
-                            if (canUnload)
-                                foreach (var data in dataArray)
-                                    data.IResourceLoader.ReleaseResources(data.AssetReference);
-                            else
-                                Debug.LogWarning(
-                                    "Warning: Cant unload asset reference from entities which weren't instantiated without a loader"
+                                componentDataList.Add(
+                                    new AddresableEntityData(
+                                        args.assetReference,
+                                        gameObjectAddressablesLoader,
+                                        newAddresableEntity
+                                    )
                                 );
+
+                                //Set new data
+                                component.Data = componentDataList.ToArray();
+
+                                //Set transform values to new instance
+                                newAddresableEntity.transform.position = spawnPosition
+                                    .transform
+                                    .position;
+                                newAddresableEntity.transform.rotation = spawnPosition
+                                    .transform
+                                    .rotation;
+                            }
+
+                            //Set component values
+                            if (
+                                newAddresableEntity.TryGetComponent(
+                                    out AddresableEntityComponent component
+                                )
+                            )
+                                SetEntityValues(component);
+                            else
+                            {
+                                component =
+                                    newAddresableEntity.AddComponent<AddresableEntityComponent>();
+                                SetEntityValues(component);
+                            }
+
+                            //! Check if pooled object
+                            //And release resource
+                            //Store data to work with
+                            //Local method, release resource on data
+                            void ReleaseDataResources()
+                            {
+                                AddresableEntityData[] dataArray = component.Data;
+
+                                bool canUnload = true;
+
+                                //Avoid instances created without loader
+                                foreach (var data in dataArray)
+                                    if (data.IResourceLoader == null)
+                                    {
+                                        canUnload = false;
+                                        break;
+                                    }
+
+                                //Unload asset reference
+                                if (canUnload)
+                                    foreach (var data in dataArray)
+                                        data.IResourceLoader.ReleaseResources(data.AssetReference);
+                                //Notify debug manager
+                                else
+                                    new NotificationCommand<DebugArgs>(sender,
+                                    new DebugArgs(args.debugMessage
+                                    + " cant unload asset reference from entities which weren't instantiated without a loader",
+                                    LogType.Warning, new System.Diagnostics.StackTrace(true)))
+                                    .Execute();
+                            }
+
+                            //Code execution
+                            ReleaseDataResources();
                         }
-
-                        //Code execution
-                        ReleaseDataResources();
                     }
-                }
 
-                //Executions
-                InstantiateNewEntity();
-                CheckRemoveLoader();
+                    //Executions
+                    InstantiateNewEntity();
+                    CheckRemoveLoader();
+                }
+                //Notify debug manager                
+                else
+                    new NotificationCommand<DebugArgs>(sender,
+                       new DebugArgs(args.debugMessage
+                       + " tried to instantiate from loader event and missing loading process",
+                       LogType.Warning, new System.Diagnostics.StackTrace(true)))
+                       .Execute();
             }
-            else
-                Debug.Log(
-                    "Warning: Tried to instantiate from loader event and missing loading process"
-                );
+
         }
 
         //Response to component about to be destroyed
         private void OnComponentDestroyResponse(object sender, ResponsiveDictionaryArgs<IAddresableEntityData, MonoBehaviour> args)
         {
-            //Release instances
-            if (Addressables.ReleaseInstance(args.key.Entity))
-                Debug.LogWarning(
-                    "Warning: Tried to release entity not loaded from asset reference on "
-                        + sender
-                        + ", the entity tried to unload was "
-                        + args.key.Entity.name
-                );
+            //Check parameters
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given parameters aren't valid"))
+                //Release instances
+                if (Addressables.ReleaseInstance(args.key.Entity))
+                    Debug.LogWarning(
+                        "Warning: Tried to release entity not loaded from asset reference on "
+                            + sender
+                            + ", the entity tried to unload was "
+                            + args.key.Entity.name
+                    );
         }
 
         //ASystem implementation used to check data values
-        protected override bool IsValidData(Component entity, IAddresableEntityData data,
-        ComplexDebugInformation complexDebugInformation)
-        {
-            //Debug values
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-             "IsValidData(Component entity, IAddresableEntityData data)");
-            string entityName = entity.gameObject.name;
-
-            return
+        protected override bool IsValidData(Component entity, IAddresableEntityData data) =>
             //Check parameters
             //Check entity
-            ReferenceTools.IsValueSafe(entity,
-            new ComplexDebugInformation(basicDebugInformation, "given entity isn't safe"))
+            ReferenceTools.IsValueSafe(entity, " given entity isn't safe")
 
             //Check data
-            && ReferenceTools.IsValueSafe(data,
-            new ComplexDebugInformation(basicDebugInformation, "given data isn't safe"))
+            && ReferenceTools.IsValueSafe(data, " given data isn't safe")
 
             //Check asset reference
-            && ReferenceTools.IsValueSafe(data.AssetReference,
-            complexDebugInformation.AddTempCustomText("asset reference isn't safe on entity: " + entityName))
+            && ReferenceTools.IsValueSafe(data.AssetReference, " asset reference isn't safe on entity: " + entity.gameObject.name)
 
             //Check resource loader
-            && ReferenceTools.IsValueSafe(data.IResourceLoader,
-            complexDebugInformation.AddTempCustomText("IResourceLoader isn't safe on entity: " + entityName))
+            && ReferenceTools.IsValueSafe(data.IResourceLoader, " IResourceLoader isn't safe on entity: " + entity.gameObject.name)
 
             //Check entity value
-            && ReferenceTools.IsValueSafe(data.Entity,
-            complexDebugInformation.AddTempCustomText("entity on data isn't safe on entity: " + entityName));
-        }
+            && ReferenceTools.IsValueSafe(data.Entity, " entity on data isn't safe on entity: " + entity.gameObject.name);
     }
 }

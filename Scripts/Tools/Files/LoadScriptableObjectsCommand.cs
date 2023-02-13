@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using MECS.Collections;
 using MECS.Patrons.Commands;
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Tools
 {
@@ -14,14 +12,10 @@ namespace MECS.Tools
     {
         //Variables
         private readonly string loadingPath = null;
-        private readonly ComplexDebugInformation complexDebugInformation = null;
 
         //Base builder
-        public LoadScriptableObjectsCommand(string loadingPath, ComplexDebugInformation complexDebugInformation)
-        {
+        public LoadScriptableObjectsCommand(string loadingPath) =>
             this.loadingPath = loadingPath;
-            this.complexDebugInformation = complexDebugInformation;
-        }
 
         //ICommandReturn, notify ends of command
         public event EventHandler<Dictionary<string, ScriptableObject>> CommandFinishedEvent = null;
@@ -32,26 +26,17 @@ namespace MECS.Tools
             //Return value
             Dictionary<string, ScriptableObject> loadedScriptable = null;
 
-            //Basic debug information
-            BasicDebugInformation basicDebugInformation = new BasicDebugInformation("LoadScriptableObjectsCommand", "Execute()");
-
             //Load assets and store
             ScriptableObject[] loadedAssets =
             Resources.LoadAll<ScriptableObject>(loadingPath);
 
             //Avoid errors checking array
-            if (CollectionsTools.arrayTools.IsArrayContentSafe(loadedAssets,
-            new ComplexDebugInformation(basicDebugInformation, "couldnt load assets")))
+            if (CollectionsTools.arrayTools.IsArrayContentSafe(loadedAssets, " loaded assets aren't safe"))
             {
                 //Itinerate loaded systems
                 foreach (ScriptableObject asset in loadedAssets)
                     CollectionsTools.dictionaryTools
-                    .AddValue(loadedScriptable, asset.name, asset,
-                    new ComplexDebugInformation(basicDebugInformation, "couldnt add assets to loaded assets dictionary"));
-
-#if UNITY_EDITOR
-                Debug.LogError("Not working properly");
-#endif
+                    .AddValue(loadedScriptable, asset.name, asset, " couldnt add assets to loaded assets dictionary");
             }
 
             return loadedScriptable;

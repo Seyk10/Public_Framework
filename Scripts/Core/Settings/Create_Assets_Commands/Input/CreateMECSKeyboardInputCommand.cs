@@ -16,11 +16,6 @@ namespace MECS.Core
     public class CreateMECSKeyboardInputCommand : ACreateMECSScriptableObjectCommand,
     ICommandReturn<Dictionary<string, ScriptableObject>>
     {
-        //ACreateMECSScriptableObjectCommand, base builder
-        public CreateMECSKeyboardInputCommand(DebugTools.ComplexDebugInformation complexDebugInformation) :
-        base(complexDebugInformation)
-        { }
-
         //ICommandReturn, notify when command ends
         public event EventHandler<Dictionary<string, ScriptableObject>> CommandFinishedEvent;
 
@@ -41,148 +36,109 @@ namespace MECS.Core
             //Check if could create all assets
             #region A_BUTTON
             //Create A button performed variable asset
-            bool couldntCreateAssets = CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.A_BUTTON_PERFORMED_VARIABLE_NAME,
+            bool couldntCreateAssets = CollectionsTools.dictionaryTools
+            .AddValue(tempDictionary, assetsNaming.A_BUTTON_PERFORMED_VARIABLE_NAME,
             new CreatePersistentScriptableObjectCommand<BoolVariable>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.A_BUTTON_PERFORMED_VARIABLE_NAME),
-            path, assetsNaming.A_BUTTON_PERFORMED_VARIABLE_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.A_BUTTON_PERFORMED_VARIABLE_NAME).Execute())
 
             //Create A click button canceled variable asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.A_BUTTON_CANCELED_VARIABLE_NAME,
             new CreatePersistentScriptableObjectCommand<BoolVariable>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.A_BUTTON_CANCELED_VARIABLE_NAME),
-            path, assetsNaming.A_BUTTON_CANCELED_VARIABLE_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.A_BUTTON_CANCELED_VARIABLE_NAME).Execute())
 
             //Create A button performed game event asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.A_BUTTON_PERFORMED_GAME_EVENT_NAME,
             new CreatePersistentScriptableObjectCommand<GameEvent>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.A_BUTTON_PERFORMED_GAME_EVENT_NAME),
-            path, assetsNaming.A_BUTTON_PERFORMED_GAME_EVENT_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.A_BUTTON_PERFORMED_GAME_EVENT_NAME).Execute())
 
             //Create A button canceled game event asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.A_BUTTON_CANCELED_GAME_EVENT_NAME,
             new CreatePersistentScriptableObjectCommand<GameEvent>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.A_BUTTON_CANCELED_GAME_EVENT_NAME),
-            path, assetsNaming.A_BUTTON_CANCELED_GAME_EVENT_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.A_BUTTON_CANCELED_GAME_EVENT_NAME).Execute())
             #endregion
             #region D_BUTTON
             //Create D button performed variable asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.D_BUTTON_PERFORMED_VARIABLE_NAME,
             new CreatePersistentScriptableObjectCommand<BoolVariable>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.D_BUTTON_PERFORMED_VARIABLE_NAME),
-            path, assetsNaming.D_BUTTON_PERFORMED_VARIABLE_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.D_BUTTON_PERFORMED_VARIABLE_NAME).Execute())
 
             //Create D button canceled variable asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.D_BUTTON_CANCELED_VARIABLE_NAME,
             new CreatePersistentScriptableObjectCommand<BoolVariable>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.D_BUTTON_CANCELED_VARIABLE_NAME),
-            path, assetsNaming.D_BUTTON_CANCELED_VARIABLE_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.D_BUTTON_CANCELED_VARIABLE_NAME).Execute())
 
             //Create D button performed game event asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.D_BUTTON_PERFORMED_GAME_EVENT_NAME,
             new CreatePersistentScriptableObjectCommand<GameEvent>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.D_BUTTON_PERFORMED_GAME_EVENT_NAME),
-            path, assetsNaming.D_BUTTON_PERFORMED_GAME_EVENT_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.D_BUTTON_PERFORMED_GAME_EVENT_NAME).Execute())
 
             //Create D button canceled game event asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.D_BUTTON_CANCELED_GAME_EVENT_NAME,
             new CreatePersistentScriptableObjectCommand<GameEvent>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.D_BUTTON_CANCELED_GAME_EVENT_NAME),
-            path, assetsNaming.D_BUTTON_CANCELED_GAME_EVENT_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.D_BUTTON_CANCELED_GAME_EVENT_NAME).Execute())
             #endregion
             #region S_BUTTON
             //Create S button performed variable asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.S_BUTTON_PERFORMED_VARIABLE_NAME,
             new CreatePersistentScriptableObjectCommand<BoolVariable>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.S_BUTTON_PERFORMED_VARIABLE_NAME),
-            path, assetsNaming.S_BUTTON_PERFORMED_VARIABLE_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.S_BUTTON_PERFORMED_VARIABLE_NAME).Execute())
 
             //Create S button canceled variable asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.S_BUTTON_CANCELED_VARIABLE_NAME,
             new CreatePersistentScriptableObjectCommand<BoolVariable>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.S_BUTTON_CANCELED_VARIABLE_NAME),
-            path, assetsNaming.S_BUTTON_CANCELED_VARIABLE_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.S_BUTTON_CANCELED_VARIABLE_NAME).Execute())
 
             //Create S button performed game event asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.S_BUTTON_PERFORMED_GAME_EVENT_NAME,
             new CreatePersistentScriptableObjectCommand<GameEvent>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.S_BUTTON_PERFORMED_GAME_EVENT_NAME),
-            path, assetsNaming.S_BUTTON_PERFORMED_GAME_EVENT_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.S_BUTTON_PERFORMED_GAME_EVENT_NAME).Execute())
 
             //Create S button canceled game event asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.S_BUTTON_CANCELED_GAME_EVENT_NAME,
             new CreatePersistentScriptableObjectCommand<GameEvent>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.S_BUTTON_CANCELED_GAME_EVENT_NAME),
-            path, assetsNaming.S_BUTTON_CANCELED_GAME_EVENT_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.S_BUTTON_CANCELED_GAME_EVENT_NAME).Execute())
             #endregion
             #region W_BUTTON
             //Create W button performed variable asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.W_BUTTON_PERFORMED_VARIABLE_NAME,
             new CreatePersistentScriptableObjectCommand<BoolVariable>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.W_BUTTON_PERFORMED_VARIABLE_NAME),
-            path, assetsNaming.W_BUTTON_PERFORMED_VARIABLE_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.W_BUTTON_PERFORMED_VARIABLE_NAME).Execute())
 
             //Create W button canceled variable asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.W_BUTTON_CANCELED_VARIABLE_NAME,
             new CreatePersistentScriptableObjectCommand<BoolVariable>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.W_BUTTON_CANCELED_VARIABLE_NAME),
-            path, assetsNaming.W_BUTTON_CANCELED_VARIABLE_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.W_BUTTON_CANCELED_VARIABLE_NAME).Execute())
 
             //Create W button performed game event asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.W_BUTTON_PERFORMED_GAME_EVENT_NAME,
             new CreatePersistentScriptableObjectCommand<GameEvent>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.W_BUTTON_PERFORMED_GAME_EVENT_NAME),
-            path, assetsNaming.W_BUTTON_PERFORMED_GAME_EVENT_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.W_BUTTON_PERFORMED_GAME_EVENT_NAME).Execute())
 
             //Create W button canceled game event asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.W_BUTTON_CANCELED_GAME_EVENT_NAME,
             new CreatePersistentScriptableObjectCommand<GameEvent>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.W_BUTTON_CANCELED_GAME_EVENT_NAME),
-            path, assetsNaming.W_BUTTON_CANCELED_GAME_EVENT_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.W_BUTTON_CANCELED_GAME_EVENT_NAME).Execute())
             #endregion
             #region SPACE_BUTTON
             //Create space button performed variable asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.SPACE_BUTTON_PERFORMED_VARIABLE_NAME,
             new CreatePersistentScriptableObjectCommand<BoolVariable>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.SPACE_BUTTON_PERFORMED_VARIABLE_NAME),
-            path, assetsNaming.SPACE_BUTTON_PERFORMED_VARIABLE_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.SPACE_BUTTON_PERFORMED_VARIABLE_NAME).Execute())
 
             //Create space button canceled variable asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.SPACE_BUTTON_CANCELED_VARIABLE_NAME,
             new CreatePersistentScriptableObjectCommand<BoolVariable>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.SPACE_BUTTON_CANCELED_VARIABLE_NAME),
-            path, assetsNaming.SPACE_BUTTON_CANCELED_VARIABLE_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.SPACE_BUTTON_CANCELED_VARIABLE_NAME).Execute())
 
             //Create space button performed game event asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.SPACE_BUTTON_PERFORMED_GAME_EVENT_NAME,
             new CreatePersistentScriptableObjectCommand<GameEvent>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.SPACE_BUTTON_PERFORMED_GAME_EVENT_NAME),
-            path, assetsNaming.SPACE_BUTTON_PERFORMED_GAME_EVENT_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.SPACE_BUTTON_PERFORMED_GAME_EVENT_NAME).Execute())
 
             //Create space button canceled game event asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.SPACE_BUTTON_CANCELED_GAME_EVENT_NAME,
             new CreatePersistentScriptableObjectCommand<GameEvent>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.SPACE_BUTTON_CANCELED_GAME_EVENT_NAME),
-            path, assetsNaming.SPACE_BUTTON_CANCELED_GAME_EVENT_NAME).Execute(),
-            complexDebugInformation);
+            (path, assetsNaming.SPACE_BUTTON_CANCELED_GAME_EVENT_NAME).Execute());
             #endregion
 
             //Set on final dictionary values

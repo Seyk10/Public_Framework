@@ -1,5 +1,3 @@
-using static MECS.Tools.DebugTools;
-
 namespace MECS.Core
 {
     //* Args used to share data when entity awake
@@ -7,7 +5,6 @@ namespace MECS.Core
     public class EntityAwakeArgs<T> : AEntityArgs<T>
     {
         //Default builder
-        public EntityAwakeArgs(T data, ComplexDebugInformation complexDebugInformation)
-        : base(data, complexDebugInformation) { }
+        public EntityAwakeArgs(T data, string debugMessage) : base(data, debugMessage) { }
     }
 }

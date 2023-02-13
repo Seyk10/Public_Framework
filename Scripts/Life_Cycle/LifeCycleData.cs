@@ -1,7 +1,6 @@
 using System;
 using MECS.Core;
 using MECS.Events;
-using MECS.Tools;
 using MECS.Variables.References;
 using UnityEngine;
 
@@ -11,8 +10,9 @@ namespace MECS.LifeCycle
     [Serializable]
     public class LifeCycleData : AData, ILifeCycleData, IEventData
     {
+        #region LIFE_CYCLE_VALUES
         //Editor variables
-        [Header("ILifeCycleData references")]
+        [Header("ILifeCycleData values")]
         [SerializeField] private BoolReference hasAwakeResponse = null;
         public BoolReference HasAwakeResponse => hasAwakeResponse;
         [SerializeField] private BoolReference hasEnableResponse = null;
@@ -23,61 +23,66 @@ namespace MECS.LifeCycle
         public BoolReference HasDisableResponse => hasDisableResponse;
         [SerializeField] private BoolReference hasDestroyResponse = null;
         public BoolReference HasDestroyResponse => hasDestroyResponse;
+        #endregion
 
+        #region EVENT_VALUES
         [Header("IEventData values")]
         [SerializeField] private EventReference eventReference = null;
         public EventReference EventReference => eventReference;
+        #endregion
 
+        #region ADATA_LIFE_CYCLE_NOTIFICATIONS_METHOD
         //AData method, notify data awake
-        public override void NotifyDataAwake(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataAwake(MonoBehaviour sender)
         {
             //Args to send
-            EntityAwakeArgs<LifeCycleData> lifeCycleArgs = new((LifeCycleData)this, complexDebugInformation);
-            EntityAwakeArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityAwakeArgs<ILifeCycleData> lifeCycleArgs = new((ILifeCycleData)this, " couldnt notify ILifeCycleData awake");
+            EntityAwakeArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify IEventData awake");
 
             //Notify LifeCycleData 
-            NotifyDataPhase<EntityAwakeArgs<LifeCycleData>, LifeCycleData>(sender, lifeCycleArgs);
+            NotifyDataPhase<EntityAwakeArgs<ILifeCycleData>, ILifeCycleData>(sender, lifeCycleArgs);
             //Notify IEventData 
             NotifyDataPhase<EntityAwakeArgs<IEventData>, IEventData>(sender, eventArgs);
         }
 
         //AData method, notify data enable
-        public override void NotifyDataEnable(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataEnable(MonoBehaviour sender)
         {
             //Args to send
-            EntityEnableArgs<LifeCycleData> lifeCycleArgs = new((LifeCycleData)this, complexDebugInformation);
-            EntityEnableArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityEnableArgs<ILifeCycleData> lifeCycleArgs = new((ILifeCycleData)this, " couldnt notify ILifeCycleData enable");
+            EntityEnableArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify IEventData enable");
 
             //Notify LifeCycleData 
-            NotifyDataPhase<EntityEnableArgs<LifeCycleData>, LifeCycleData>(sender, lifeCycleArgs);
+            NotifyDataPhase<EntityEnableArgs<ILifeCycleData>, ILifeCycleData>(sender, lifeCycleArgs);
             //Notify IEventData
             NotifyDataPhase<EntityEnableArgs<IEventData>, IEventData>(sender, eventArgs);
         }
 
         //AData method, notify data disable
-        public override void NotifyDataDisable(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataDisable(MonoBehaviour sender)
         {
             //Args to send
-            EntityDisableArgs<LifeCycleData> lifeCycleArgs = new((LifeCycleData)this, complexDebugInformation);
-            EntityDisableArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityDisableArgs<ILifeCycleData> lifeCycleArgs = new((ILifeCycleData)this, " couldnt notify ILifeCycleData disable");
+            EntityDisableArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify IEventData disable");
 
             //Notify LifeCycleData 
-            NotifyDataPhase<EntityDisableArgs<LifeCycleData>, LifeCycleData>(sender, lifeCycleArgs);
+            NotifyDataPhase<EntityDisableArgs<ILifeCycleData>, ILifeCycleData>(sender, lifeCycleArgs);
             //Notify IEventData
             NotifyDataPhase<EntityDisableArgs<IEventData>, IEventData>(sender, eventArgs);
         }
 
         //AData method, notify data destroy
-        public override void NotifyDataDestroy(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataDestroy(MonoBehaviour sender)
         {
             //Args to send
-            EntityDestroyArgs<LifeCycleData> lifeCycleArgs = new((LifeCycleData)this, complexDebugInformation);
-            EntityDestroyArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityDestroyArgs<ILifeCycleData> lifeCycleArgs = new((ILifeCycleData)this, " couldnt notify ILifeCycleData destroy");
+            EntityDestroyArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify ILifeCycleData destroy");
 
             //Notify LifeCycleData 
-            NotifyDataPhase<EntityDestroyArgs<LifeCycleData>, LifeCycleData>(sender, lifeCycleArgs);
+            NotifyDataPhase<EntityDestroyArgs<ILifeCycleData>, ILifeCycleData>(sender, lifeCycleArgs);
             //Notify IEventData
             NotifyDataPhase<EntityDestroyArgs<IEventData>, IEventData>(sender, eventArgs);
         }
+        #endregion
     }
 }

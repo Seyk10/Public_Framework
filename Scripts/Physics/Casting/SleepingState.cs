@@ -1,5 +1,4 @@
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Physics.Casting
 {
@@ -7,8 +6,7 @@ namespace MECS.Physics.Casting
     public class SleepingState : ACastingState
     {
         //ACastingState, default builder
-        public SleepingState(MonoBehaviour monoBehaviour, ICastingData data, ComplexDebugInformation complexDebugInformation)
-        : base(monoBehaviour, data, complexDebugInformation) { }
+        public SleepingState(MonoBehaviour monoBehaviour, ICastingData data) : base(monoBehaviour, data) { }
 
         //ACastingState, stop casting process 
         public override void RunState() => monoBehaviour.StopCoroutine(data.CastingExecution);

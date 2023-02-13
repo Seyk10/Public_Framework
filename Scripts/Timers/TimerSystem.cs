@@ -4,7 +4,6 @@ using UnityEngine;
 using MECS.Patrons.Commands;
 using MECS.Events;
 using MECS.Collections;
-using static MECS.Tools.DebugTools;
 using MECS.Tools;
 using MECS.Conditionals;
 
@@ -50,13 +49,8 @@ namespace MECS.Timers
         //ISetState, create all the necessary states and set these on data state machines
         public void InitializeStateMachineStates(object sender, ResponsiveDictionaryArgs<ITimerData, MonoBehaviour> args)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-            "(object sender, ResponsiveDictionaryArgs<ITimerData, MonoBehaviour> args)");
-
             //Check parameters
-            if (ReferenceTools.AreEventParametersValid(sender, args,
-            new ComplexDebugInformation(basicDebugInformation, "given parameters aren't valid")))
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given parameters aren't valid"))
             {
                 //Store data
                 ITimerData data = args.key;
@@ -68,17 +62,13 @@ namespace MECS.Timers
 
                     //Create states
                     //Reset timer values
-                    InitializeTimerState initializeTimerState = new InitializeTimerState(args.value, data, args.complexDebugInformation
-                    .AddTempCustomText("couldnt set initialize timer state"));
+                    InitializeTimerState initializeTimerState = new InitializeTimerState(args.value, data);
                     //Pause timer values
-                    PauseTimerState pauseTimerState = new PauseTimerState(args.value, data, args.complexDebugInformation
-                    .AddTempCustomText("couldnt set pause timer state"));
+                    PauseTimerState pauseTimerState = new PauseTimerState(args.value, data);
                     //Run timer values
-                    RunTimerState runTimerState = new RunTimerState(args.value, data, args.complexDebugInformation
-                    .AddTempCustomText("couldnt set run timer state"));
+                    RunTimerState runTimerState = new RunTimerState(args.value, data);
                     //Delete timer values
-                    StopTimerState stopTimerState = new StopTimerState(args.value, data, args.complexDebugInformation
-                    .AddTempCustomText("couldnt set stop timer state"));
+                    StopTimerState stopTimerState = new StopTimerState(args.value, data);
 
                     //Add states to state machine
                     data.StateMachine.AddState(initializeTimerState);
@@ -95,94 +85,82 @@ namespace MECS.Timers
         //ISetState, set timers states on component data
         public void SetStateResponse<T3>(object sender, ITimerData data) where T3 : ATimerState
         {
-            //Store state machine
-            TimerStateMachine stateMachine = data.StateMachine;
-
-            //Local method, run or set state
-            void SetCurrentState()
+            //Check given parameters
+            if (CollectionsTools.arrayTools.IsArrayContentSafe(new object[] { sender, data }, " given parameters aren't safe"))
             {
-                //Avoid repeat timers and execute it if its the same
-                if (stateMachine != null && stateMachine.CurrentState is T3)
-                    //Run current state
-                    stateMachine.CurrentState.RunState();
-                else
-                    //Check if timer has state
-                    stateMachine.SetState<T3>();
-            }
+                //Store state machine
+                TimerStateMachine stateMachine = data.StateMachine;
 
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-            "SetStateResponse<T3>(object sender, ITimerData data)");
+                //Local method, run or set state
+                void SetCurrentState()
+                {
+                    //Avoid repeat timers and execute it if its the same
+                    if (ReferenceTools.IsValueSafe(stateMachine)
+                    && stateMachine.CurrentState is T3)
+                        //Run current state
+                        stateMachine.CurrentState.RunState();
+                    else
+                        //Check if timer has state
+                        stateMachine.SetState<T3>();
+                }
 
-            //Check if state machine contains state type, initialize if it does not exist
-            if (stateMachine.ContainsState<T3>())
-                SetCurrentState();
-            //Try to convert sender to monoBehaviour
-            else if (TypeTools.ConvertToType<MonoBehaviour>(sender, out MonoBehaviour entityMonoBehaviour,
-            new ComplexDebugInformation(basicDebugInformation, "couldnt convert sender to MonoBehaviour")))
-            {
-                //Set state machine initialization
-                InitializeStateMachineStates(sender,
-                new ResponsiveDictionaryArgs<ITimerData, MonoBehaviour>(data, entityMonoBehaviour,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt initialize state machine on entity: "
-                + entityMonoBehaviour.name)));
+                //Check if state machine contains state type, initialize if it does not exist
+                if (stateMachine.ContainsState<T3>())
+                    SetCurrentState();
+                //Try to convert sender to monoBehaviour
+                else if (TypeTools.ConvertToType<MonoBehaviour>(sender, out MonoBehaviour entityMonoBehaviour,
+                " couldnt convert sender to MonoBehaviour"))
+                {
+                    //Set state machine initialization
+                    InitializeStateMachineStates(sender,
+                    new ResponsiveDictionaryArgs<ITimerData, MonoBehaviour>(data, entityMonoBehaviour,
+                    " couldnt initialize state machine on entity: "
+                    + entityMonoBehaviour.name));
 
-                //Set state
-                SetCurrentState();
+                    //Set state
+                    SetCurrentState();
+                }
             }
         }
 
         //Invoke events when timer ends
         private void ResponseTimerEnds(object sender, ITimerData data)
         {
-            //Convert
-            IEventData[] eventData = { data as IEventData };
+            //Check parameters
+            if (CollectionsTools.arrayTools.IsArrayContentSafe(new object[] { sender, data }, " given parameters aren't safe"))
+                //Try to convert data to event data
+                if (TypeTools.ConvertToType(data, out IEventData eventData, " couldnt convert data to IEventData from "
+                + sender.ToString()))
 
-            //Check if can invoke
-            if (eventData[0] != null)
-            {
-                //Debug information
-                BasicDebugInformation basicDebugInformation = new("TimerSystem",
-                 "ResponseTimerEnds(object sender, ITimerData data)");
-
-                //Notify event system
-                new NotificationCommand<NotifyEventsInvocationArgs>(sender,
-                    new NotifyEventsInvocationArgs(eventData,
-                    new ComplexDebugInformation(basicDebugInformation, "couldnt raise event data values")), basicDebugInformation)
-                    .Execute();
-            }
-#if UNITY_EDITOR
-            else Debug.LogWarning("Warning: Timer data doesnt implement IEventData interface " + sender.ToString());
-#endif
+                    //Notify event system
+                    new NotificationCommand<NotifyEventsInvocationArgs>(sender,
+                        new NotifyEventsInvocationArgs(new IEventData[] { eventData }, " couldnt raise event data values"))
+                        .Execute();
         }
 
         //ASystem, checks if data references are valid
-        protected override bool IsValidData(Component entityComponent, ITimerData data,
-        ComplexDebugInformation complexDebugInformation) =>
+        protected override bool IsValidData(Component entityComponent, ITimerData data) =>
             //Check component
-            ReferenceTools.IsValueSafe(entityComponent, complexDebugInformation.AddTempCustomText("entityComponent isn't safe"))
+            ReferenceTools.IsValueSafe(entityComponent, " entityComponent isn't safe")
 
             //Check data
-            && ReferenceTools.IsValueSafe(data, complexDebugInformation.AddTempCustomText("ITimerData isn't safe"))
+            && ReferenceTools.IsValueSafe(data, " ITimerData isn't safe")
 
             //Check timer value
             && NumericTools.IsComparativeCorrect(data.Time.Value, 0, ENumericConditional.Bigger,
-            complexDebugInformation.AddTempCustomText("time value must be bigger than 0 on: " + entityComponent.gameObject.name));
+            " time value must be bigger than 0 on: " + entityComponent.gameObject.name);
 
         //ISetState, set states from editor commands
         public void RespondEditorStateCommand<T3>(object sender, MonoBehaviour component) where T3 : ATimerState
         {
-            //Convert to target component
-            TimerComponent timerComponent = component as TimerComponent;
-
-            //Avoid errors
-            if (timerComponent != null)
-                //Itinerate data on component
-                foreach (ITimerData data in timerComponent.DataReference.GetValue())
-                    SetStateResponse<T3>(component, data);
-#if UNITY_EDITOR
-            else Debug.LogWarning("Warning: Failed to convert MonoBehaviour to timer component");
-#endif
+            //Check parameters
+            if (CollectionsTools.arrayTools.IsArrayContentSafe(new object[] { sender, component }, " given parameters aren't safe"))
+                //Convert component to timer component
+                if (TypeTools.ConvertToType(component, out TimerComponent timerComponent,
+                " failed to convert MonoBehaviour to timer component"))
+                    //Itinerate data on component
+                    foreach (ITimerData data in timerComponent.Data)
+                        SetStateResponse<T3>(component, data);
         }
     }
 }

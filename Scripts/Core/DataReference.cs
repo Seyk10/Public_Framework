@@ -1,6 +1,7 @@
 using System;
 using MECS.Collections;
 using MECS.LifeCycle;
+using MECS.Patrons.Commands;
 using MECS.Tools;
 using UnityEngine;
 using static MECS.Tools.DebugTools;
@@ -28,10 +29,8 @@ namespace MECS.Core
             //Set value to return or debug missing reference
             if (useLocalValues)
                 returnValue = localValue;
-            else if (externalValue != null)
+            else if (ReferenceTools.IsValueSafe(externalValue, " couldnt get valid values"))
                 returnValue = externalValue.Data;
-            else
-                ReferenceTools.DebugWarningNoValidReference("DataReference", "GetValue()", "externalValue");
 
             return returnValue;
         }
@@ -42,10 +41,7 @@ namespace MECS.Core
         {
             //Check parameters
             bool areParametersValid =
-            ReferenceTools.AreValuesSafe(new object[] { sender, lifeCyclePhase, complexDebugInformation },
-            new ComplexDebugInformation(this.GetType().Name,
-                 "NotifyDataPhase(MonoBehaviour sender, ELifeCyclePhase lifeCyclePhase, "
-                + "ComplexDebugInformation complexDebugInformation)", "given parameters aren't safe"));
+            CollectionsTools.arrayTools.IsArrayContentSafe(new object[] { sender, lifeCyclePhase }, " given parameters aren't safe");
 
             //Execute notifications cases
             if (areParametersValid)
@@ -55,42 +51,32 @@ namespace MECS.Core
 
                 //Check if data array is safe
                 if (CollectionsTools.arrayTools
-                .IsArrayContentSafe(dataValues, complexDebugInformation.AddTempCustomText("data array isn't safe")))
+                .IsArrayContentSafe(dataValues, " data array isn't safe"))
                     //Switch data phase cases and call executions
                     switch (lifeCyclePhase)
                     {
                         case ELifeCyclePhase.Awake:
                             //Itinerate and execute notification
                             foreach (T data in dataValues)
-                                data.NotifyDataAwake(sender, complexDebugInformation);
+                                data.NotifyDataAwake(sender);
                             break;
 
                         case ELifeCyclePhase.Destroy:
                             //Itinerate and execute notification
                             foreach (T data in dataValues)
-                                data.NotifyDataDestroy(sender, complexDebugInformation);
+                                data.NotifyDataDestroy(sender);
                             break;
 
                         case ELifeCyclePhase.Disable:
                             //Itinerate and execute notification
                             foreach (T data in dataValues)
-                                data.NotifyDataDisable(sender, complexDebugInformation);
+                                data.NotifyDataDisable(sender);
                             break;
 
                         case ELifeCyclePhase.Enable:
                             //Itinerate and execute notification
                             foreach (T data in dataValues)
-                                data.NotifyDataEnable(sender, complexDebugInformation);
-                            break;
-
-                        case ELifeCyclePhase.NULL:
-                            DebugTools.DebugError(complexDebugInformation
-                            .AddTempCustomText("cant notify data with life cycle phase NULL value"));
-                            break;
-
-                        case ELifeCyclePhase.Start:
-                            DebugTools.DebugError(complexDebugInformation
-                                                    .AddTempCustomText("cant notify data with life cycle phase START value"));
+                                data.NotifyDataEnable(sender);
                             break;
                     }
             }

@@ -39,8 +39,7 @@ namespace MECS.MemoryManagement
             if (!asyncOperationHandlesDictionary.ContainsKey(value))
             {
                 //Store as loading asset
-                CollectionsTools.listTools.AddValue(queuedAssets, value,
-                new ComplexDebugInformation(this.GetType().Name, "LoadResource(AssetReference value)", "couldnt add value to queuedAssets"));
+                CollectionsTools.listTools.AddValue(queuedAssets, value, " couldnt add value to queuedAssets");
 
                 //Store operation
                 var asyncOperationHandle = Addressables.LoadAssetAsync<T>(value);
@@ -51,7 +50,8 @@ namespace MECS.MemoryManagement
             }
             //Share content if it was loaded
             else if (loadedAssets.Contains(value))
-                LoadedAssetReferenceEvent?.Invoke(this, new LoadedAssetReferenceArgs<T>(value, asyncOperationHandlesDictionary[value]));
+                LoadedAssetReferenceEvent?.Invoke(this, new LoadedAssetReferenceArgs<T>(value, asyncOperationHandlesDictionary[value],
+                " couldnt load asset reference"));
         }
 
         //Handle operation completed values
@@ -90,13 +90,11 @@ namespace MECS.MemoryManagement
             {
                 //Remove for queuedAssets
                 CollectionsTools.listTools.RemoveValue(queuedAssets, assetReference,
-                new ComplexDebugInformation(this.GetType().Name, "OnCompleteAsyncOperationHandle(AsyncOperationHandle<T> asyncOperationHandle)",
-                "couldnt remove assetReference from queuedAssets"));
+                " couldnt remove assetReference from queuedAssets");
 
                 //Store as loaded and share
                 CollectionsTools.listTools.AddValue(loadedAssets, assetReference,
-                new ComplexDebugInformation(this.GetType().Name, "OnCompleteAsyncOperationHandle(AsyncOperationHandle<T> asyncOperationHandle)",
-                "couldnt add assetReference to loadedAssets"));
+                " couldnt add assetReference to loadedAssets");
             }
             //On operation fail, release resources and remove it
             else
@@ -106,7 +104,8 @@ namespace MECS.MemoryManagement
             }
 
             //Notify completed loading
-            LoadedAssetReferenceEvent?.Invoke(this, new LoadedAssetReferenceArgs<T>(assetReference, asyncOperationHandle));
+            LoadedAssetReferenceEvent?.Invoke(this, new LoadedAssetReferenceArgs<T>(assetReference, asyncOperationHandle,
+            " couldnt load asset reference"));
         }
 
         //Release resources used on asset reference
@@ -115,13 +114,12 @@ namespace MECS.MemoryManagement
             //Release completed operation
             bool removeCompletedOperation =
                     CollectionsTools.listTools.RemoveValue(loadedAssets, value,
-                    new ComplexDebugInformation(this.GetType().Name, "ReleaseResources(AssetReference value)",
-                    "couldnt remove value from loadedAssets"))
+                    " couldnt remove value from loadedAssets")
                     && asyncOperationHandlesDictionary.ContainsKey(value),
-                removeTriedOperation =
+            //Check if couldnt remove
+            removeTriedOperation =
                     CollectionsTools.listTools.RemoveValue(queuedAssets, value,
-                    new ComplexDebugInformation(this.GetType().Name, "ReleaseResources(AssetReference value)",
-                    "couldnt remove value from queuedAssets"))
+                    " couldnt remove value from queuedAssets")
                     && asyncOperationHandlesDictionary.ContainsKey(value);
 
             //Local method, release resource and remove from dictionary
@@ -139,7 +137,9 @@ namespace MECS.MemoryManagement
                 ReleaseOperation();
             //Notify no loaded resource
             else if (!asyncOperationHandlesDictionary.ContainsKey(value))
+#if UNITY_EDITOR
                 Debug.LogWarning("Warning: Tried to released a not loaded asset reference");
+#endif
         }
 
         //Release all the resources used on asset references

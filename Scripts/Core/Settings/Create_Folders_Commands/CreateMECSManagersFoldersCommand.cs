@@ -4,19 +4,15 @@ using System.IO;
 using MECS.Patrons.Commands;
 using MECS.Tools;
 using UnityEditor;
+using UnityEngine;
 using static MECS.Tools.DebugTools;
 
 namespace MECS.Core
 {
     //* Command used to create all folders related to scriptable objects assets
     //* T = bool
-    public class CreateMECSManagersFoldersCommand : ACreateMECSFolderCommand, ICommandReturn<bool>
+    public class CreateMECSManagersFoldersCommand : ICommandReturn<bool>
     {
-        //ACreateMECSFolderCommand, base builder
-        public CreateMECSManagersFoldersCommand(DebugTools.ComplexDebugInformation complexDebugInformation) :
-        base(complexDebugInformation)
-        { }
-
         //ICommandReturn, notify ends of command
         public event EventHandler<bool> CommandFinishedEvent = null;
 
@@ -35,12 +31,11 @@ namespace MECS.Core
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
                 //Debug information
-                DebugTools.DebugLog(new ComplexDebugInformation("CreateMECSManagersFoldersCommand", "Execute()",
-                "created managers folders related to framework"));
+                Debug.Log("created managers folders related to framework");
             }
             catch (Exception exception)
             {
-                DebugTools.DebugError(complexDebugInformation.AddTempCustomText(exception.ToString()));
+                Debug.LogError(exception.ToString());
                 areFoldersCreated = false;
             }
 
@@ -48,5 +43,4 @@ namespace MECS.Core
         }
     }
 }
-
 #endif

@@ -4,7 +4,6 @@ using MECS.Collections;
 using MECS.GameEvents;
 using MECS.Patrons.Commands;
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Tools
 {
@@ -38,14 +37,8 @@ namespace MECS.Tools
         //Method, response to scriptable enable notification
         private void OnEnableResponse(object sender, NotifyScriptableDebugOnEnableArgs args)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-            "OnEnableResponse(object sender, NotifyScriptableDebugOnEnableArgs args)");
-
-            string methodName = "OnEnableResponse(object sender, NotifyScriptableDebugOnEnableArgs args)";
-
             //Check if event values are safe
-            if (AreResponseValuesSafe(sender, args, methodName))
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given parameters aren't safe"))
                 //Check args values
                 if (args.AreValuesValid())
                 {
@@ -56,68 +49,37 @@ namespace MECS.Tools
                         if (!gameEventsActiveInformationList.Contains(args.scriptableName))
                             //Add to list
                             if (CollectionsTools.listTools.AddValue(gameEventsActiveInformationList, args.scriptableName,
-                            new ComplexDebugInformation(basicDebugInformation, "couldnt add value to gameEventsActiveInformationList")))
+                            " couldnt add value to gameEventsActiveInformationList"))
                                 gameEventsActiveInformation = gameEventsActiveInformationList.ToArray();
 
                         return;
                     }
-
-                    //Debug if type wasn't supported
-                    DebugNotSupportedType(methodName, args.scriptableType.Name);
                 }
         }
 
         //Method, response to scriptable disable notification
         private void OnDisableResponse(object sender, NotifyScriptableDebugOnDisableArgs args)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-            "OnDisableResponse(object sender, NotifyScriptableDebugOnDisableArgs args)");
-
-            string methodName = "OnDisableResponse(object sender, NotifyScriptableDebugOnDisableArgs args)";
-
             //Check if event values are safe
-            if (AreResponseValuesSafe(sender, args, methodName))
-                //Check args values
-                if (args.AreValuesValid())
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given parameters aren't safe"))
+            {
+                //Check game event type
+                bool canTryGameEventRemove = args.scriptableType == typeof(GameEvent)
+                && gameEventsActiveInformationList.Count > 0;
+
+                if (canTryGameEventRemove)
                 {
-                    //Check game event type
-                    bool canTryGameEventRemove = args.scriptableType == typeof(GameEvent)
-                    && gameEventsActiveInformationList.Count > 0;
+                    //Check if list contains value
+                    if (gameEventsActiveInformationList.Contains(args.scriptableName))
+                        //Remove from list
+                        if (CollectionsTools.listTools.RemoveValue(gameEventsActiveInformationList, args.scriptableName,
+                        " couldnt remove value from gameEventsActiveInformationList"))
+                            gameEventsActiveInformation = gameEventsActiveInformationList.ToArray();
 
-                    if (canTryGameEventRemove)
-                    {
-                        //Check if list contains value
-                        if (gameEventsActiveInformationList.Contains(args.scriptableName))
-                            //Remove from list
-                            if (CollectionsTools.listTools.RemoveValue(gameEventsActiveInformationList, args.scriptableName,
-                            new ComplexDebugInformation(basicDebugInformation,
-                            "couldnt remove value from gameEventsActiveInformationList")))
-                                gameEventsActiveInformation = gameEventsActiveInformationList.ToArray();
-
-                        return;
-                    }
-
-                    //Debug if type wasn't supported
-                    DebugNotSupportedType(methodName, args.scriptableType.Name);
+                    return;
                 }
+            }
         }
-
-        //Method, debug base response values
-        private bool AreResponseValuesSafe(object sender, ANotifyScriptableDebugStateArgs args, string methodName) =>
-            //Check parameters
-            ReferenceTools.AreValuesSafe(new object[] { sender, args, methodName },
-            new ComplexDebugInformation(this.GetType().Name,
-            "AreResponseValuesSafe(object sender, ANotifyScriptableDebugStateArgs args, string methodName)",
-            "given parameters aren't safe"))
-
-            //Check args
-            && args.AreValuesValid();
-
-        //Method, debug not supported type
-        private void DebugNotSupportedType(string methodName, string typeName)
-            => DebugTools.DebugWarning(new ComplexDebugInformation(this.GetType().Name, methodName,
-             "type " + typeName + " isn't supported."));
 
         //IDisposable, clean values
         public void Dispose()

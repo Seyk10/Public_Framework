@@ -57,107 +57,89 @@ namespace MECS.Core
             Dispose();
         }
 
-        //Respond to interface data type awake event
+        //Method, respond to interface data type awake event
         private void AwakeResponse(object sender, EntityAwakeArgs<T> args)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-            "AwakeResponse(object sender, EntityAwakeArgs args)");
-
             //Check parameters first
-            if (ReferenceTools.AreEventParametersValid(sender, args,
-            new ComplexDebugInformation(basicDebugInformation, "given args aren't valid")))
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given args aren't valid"))
 
                 //Convert sender if its possible
                 if (TypeTools.ConvertToType(sender, out MonoBehaviour entityMonoBehaviour,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt convert sender to monoBehaviour")))
+                args.debugMessage + " couldnt convert sender to monoBehaviour"))
 
                     //Avoid if contains data
-                    if (!dataDictionary.ContainsElement(args.data))
+                    if (!dataDictionary.dictionary.ContainsKey(args.data))
                         //Add to data instances dictionary
                         dataDictionary.AddElement(args.data, entityMonoBehaviour,
-                            new ComplexDebugInformation(basicDebugInformation, "couldnt add data on dataDictionary from entity: "
-                            + entityMonoBehaviour.gameObject.name));
+                        args.debugMessage + " couldnt add data on dataDictionary from entity: " + entityMonoBehaviour.gameObject.name);
         }
 
-        //Respond to interface data type destroy event
+        //Method, respond to interface data type destroy event
         private void DestroyResponse(object sender, EntityDestroyArgs<T> args)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-            "DestroyResponse(object sender, EntityDestroyArgs args)");
-
             //Check parameters first
-            if (ReferenceTools.AreEventParametersValid(sender, args,
-            new ComplexDebugInformation(basicDebugInformation, "given args aren't valid")))
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given args aren't valid"))
+
                 //Convert sender if its possible
                 if (TypeTools.ConvertToType(sender, out MonoBehaviour entityMonoBehaviour,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt convert sender to monoBehaviour")))
+                args.debugMessage + " couldnt convert sender to monoBehaviour"))
 
                     //GC destroy data before some executions so its recommended to check if data is available
                     //Check if dictionary contains element
-                    if (dataDictionary.ContainsElement(args.data))
+                    if (dataDictionary.dictionary.ContainsKey(args.data))
                         //Remove from data instances dictionary
                         dataDictionary.RemoveElement(args.data,
-                            new ComplexDebugInformation(basicDebugInformation, "couldnt remove data on dataDictionary from entity: "
-                            + entityMonoBehaviour.gameObject.name));
+                            args.debugMessage + "couldnt remove data on dataDictionary from entity: "
+                            + entityMonoBehaviour.gameObject.name);
         }
 
-        //Respond to interface data type disable event
+        //Method, respond to interface data type disable event
         private void DisableResponse(object sender, EntityDisableArgs<T> args)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-            "DisableResponse(object sender, EntityDisableArgs args)");
-
             //Check parameters first
-            if (ReferenceTools.AreEventParametersValid(sender, args,
-            new ComplexDebugInformation(basicDebugInformation, "given args aren't valid")))
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given args aren't valid"))
+
                 //Convert sender if its possible
                 if (TypeTools.ConvertToType(sender, out MonoBehaviour entityMonoBehaviour,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt convert sender to monoBehaviour")))
+                args.debugMessage + " couldnt convert sender to monoBehaviour"))
                 {
                     //Some elements can be instantiate as disable, also on application quit GC destroy data before some
                     //executions so its recommended to check if data is available
 
                     //Remove data from enable dictionary if its was enable
-                    if (enableDataDictionary.ContainsElement(args.data))
+                    if (enableDataDictionary.dictionary.ContainsKey(args.data))
                         enableDataDictionary.RemoveElement(args.data,
-                        new ComplexDebugInformation(basicDebugInformation, "couldnt remove data on enableDataDictionary from entity: "
-                        + entityMonoBehaviour.gameObject.name));
+                        args.debugMessage + " couldnt remove data on enableDataDictionary from entity: "
+                        + entityMonoBehaviour.gameObject.name);
 
                     //Add data to disable dictionary if it doesnt contain
-                    if (!disableDataDictionary.ContainsElement(args.data))
+                    if (!disableDataDictionary.dictionary.ContainsKey(args.data))
                         //Add data to disable dictionary 
                         disableDataDictionary.AddElement(args.data, entityMonoBehaviour,
-                        new ComplexDebugInformation(basicDebugInformation, "couldnt add data on disableDataDictionary from entity: "
-                        + entityMonoBehaviour.gameObject.name));
+                        args.debugMessage + " couldnt add data on disableDataDictionary from entity: "
+                        + entityMonoBehaviour.gameObject.name);
                 }
         }
 
-        //Respond to interface data type enable event
+        //Method, respond to interface data type enable event
         private void EnableResponse(object sender, EntityEnableArgs<T> args)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-            "DisableResponse(object sender, EntityDisableArgs args)");
-
             //Check parameters first
-            if (ReferenceTools.AreEventParametersValid(sender, args,
-            new ComplexDebugInformation(basicDebugInformation, "given args aren't valid")))
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given args aren't valid"))
+
                 //Convert sender if its possible
                 if (TypeTools.ConvertToType(sender, out MonoBehaviour entityMonoBehaviour,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt convert sender to monoBehaviour")))
+                args.debugMessage + " couldnt convert sender to monoBehaviour"))
                 {
                     //Try to remove if dictionary contains value
                     disableDataDictionary.RemoveElement(args.data);
 
                     //Add data to enableDataDictionary if it doesnt contain
-                    if (!enableDataDictionary.ContainsElement(args.data))
+                    if (!enableDataDictionary.dictionary.ContainsKey(args.data))
                         //Try to add data on enable dictionary
                         enableDataDictionary.AddElement(args.data, entityMonoBehaviour,
-                        new ComplexDebugInformation(basicDebugInformation, "couldnt add data on enableDataDictionary from entity: "
-                        + entityMonoBehaviour.gameObject.name));
+                        args.debugMessage + " couldnt add data on enableDataDictionary from entity: "
+                        + entityMonoBehaviour.gameObject.name);
                 }
         }
 

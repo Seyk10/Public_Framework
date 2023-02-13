@@ -6,7 +6,7 @@ namespace MECS.Tools
     public class NotifyScriptableDebugOnDisableArgs : ANotifyScriptableDebugStateArgs
     {
         //Base builder
-        public NotifyScriptableDebugOnDisableArgs(Type scriptableType, string scriptableName) : base(scriptableType, scriptableName)
-        { }
+        public NotifyScriptableDebugOnDisableArgs(Type scriptableType, string scriptableName, string debugMessage)
+        : base(scriptableType, scriptableName, debugMessage) { }
     }
 }

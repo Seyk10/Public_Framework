@@ -1,5 +1,6 @@
 using UnityEngine;
 using MECS.Core;
+using System.Diagnostics;
 
 namespace MECS.Tools
 {
@@ -10,7 +11,7 @@ namespace MECS.Tools
         public static void DebugLog(ComplexDebugInformation debugInformation)
         {
             if (MECSSettings.CanDebug)
-                Debug.Log("Log: On " + debugInformation.scriptName + ", " +
+                UnityEngine.Debug.Log("Log: On " + debugInformation.scriptName + ", " +
                 debugInformation.methodName + ", " +
                 debugInformation.CustomText);
         }
@@ -19,7 +20,7 @@ namespace MECS.Tools
         public static void DebugWarning(ComplexDebugInformation debugInformation)
         {
             if (MECSSettings.CanDebug)
-                Debug.LogWarning("Warning: On " + debugInformation.scriptName + ", " +
+                UnityEngine.Debug.LogWarning("Warning: On " + debugInformation.scriptName + ", " +
                 debugInformation.methodName + ", " +
                 debugInformation.CustomText);
         }
@@ -28,14 +29,14 @@ namespace MECS.Tools
         public static void DebugError(BasicDebugInformation debugInformation)
         {
             if (MECSSettings.CanDebug)
-                Debug.LogError("Error: On " + debugInformation.scriptName + ", " + debugInformation.methodName);
+                UnityEngine.Debug.LogError("Error: On " + debugInformation.scriptName + ", " + debugInformation.methodName);
         }
 
         //Notify error information using a standard
         public static void DebugError(ComplexDebugInformation debugInformation)
         {
             if (MECSSettings.CanDebug)
-                Debug.LogError("Error: On " + debugInformation.scriptName + ", " +
+                UnityEngine.Debug.LogError("Error: On " + debugInformation.scriptName + ", " +
                 debugInformation.methodName + ", " +
                 debugInformation.CustomText);
         }
@@ -44,7 +45,7 @@ namespace MECS.Tools
         public class BasicDebugInformation
         {
             //Variables
-            public readonly string scriptName = null,
+            public string scriptName = null,
             methodName = null;
 
             //Base builder
@@ -52,6 +53,15 @@ namespace MECS.Tools
             {
                 this.scriptName = scriptName;
                 this.methodName = methodName;
+            }
+
+            //Base builder
+            public BasicDebugInformation(object entity, StackTrace stackTrace)
+            {
+                //Get type from entity
+                this.scriptName = entity.GetType().Name;
+                //Get trace by reflection
+                this.methodName = stackTrace.GetFrame(0).GetMethod().Name;
             }
         }
 

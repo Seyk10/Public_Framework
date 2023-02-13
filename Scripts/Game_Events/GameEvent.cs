@@ -34,12 +34,9 @@ namespace MECS.GameEvents
             observer.ListenerAdditionEvent += AddEditorDisplayInformation;
             observer.ListenerRemoveEvent += RemoveEditorDisplayInformation;
 
-            //Debug information
-            BasicDebugInformation debugInformation = new("GameEvent", "OnEnable()");
-
             //Notify when scriptable is enabled
             new NotificationCommand<NotifyScriptableDebugOnEnableArgs>(this,
-                new NotifyScriptableDebugOnEnableArgs(this.GetType(), this.name), debugInformation).Execute();
+                new NotifyScriptableDebugOnEnableArgs(this.GetType(), this.name, " couldnt notify game event OnEnable")).Execute();
         }
 
         //ScriptableObject, remove subscriptions
@@ -49,20 +46,17 @@ namespace MECS.GameEvents
             observer.ListenerAdditionEvent -= AddEditorDisplayInformation;
             observer.ListenerRemoveEvent -= RemoveEditorDisplayInformation;
 
-            //Debug information
-            BasicDebugInformation debugInformation = new("GameEvent", "OnDisable()");
-
             //Notify when scriptable is disabled
             new NotificationCommand<NotifyScriptableDebugOnDisableArgs>(this,
-                new NotifyScriptableDebugOnDisableArgs(this.GetType(), this.name), debugInformation).Execute();
+                new NotifyScriptableDebugOnDisableArgs(this.GetType(), this.name, " couldnt notify game event OnEnable")).Execute();
         }
 
         //Method, add editor information
         private void AddEditorDisplayInformation(object sender, string args)
         {
             //Make check of each value
-            bool isSenderSafe = ReferenceTools.IsValueSafe(sender),
-            areArgsSafe = ReferenceTools.IsValueSafe(args),
+            bool isSenderSafe = ReferenceTools.IsValueSafe(sender, " given sender isn't valid"),
+            areArgsSafe = ReferenceTools.IsValueSafe(args, " given args isn't valid"),
             areReferencesSafe = isSenderSafe && areArgsSafe;
 
             //Make updates of display
@@ -70,30 +64,15 @@ namespace MECS.GameEvents
             {
                 //Make add to subjectsNamesList
                 if (CollectionsTools.listTools.AddValue(subjectsNamesList, args,
-                new ComplexDebugInformation(this.GetType().Name, "AddEditorDisplayInformation(object sender, string args)",
-                "couldnt add to subjectsNamesList on game event " + this.name)))
+                " couldnt add to subjectsNamesList on game event " + this.name))
                 {
-                    //Basic information
-                    BasicDebugInformation debugInformation = new("GameEvent",
-                     "AddEditorDisplayInformation(object sender, string args)");
-
                     //Notify debug information, adding subscribers
                     new NotificationCommand<NotifyScriptableDebugOnEnableArgs>(this,
-                    new NotifyScriptableDebugOnEnableArgs(this.GetType(), this.name), debugInformation).Execute();
+                    new NotifyScriptableDebugOnEnableArgs(this.GetType(), this.name, " couldnt notify game event OnEnable")).Execute();
 
                     //Set new names
                     subjectsNames = subjectsNamesList.ToArray();
                 }
-            }
-            else
-            {
-                //Debug sender
-                if (!isSenderSafe)
-                    ReferenceTools.DebugErrorNoValidReference("GameEvent", "AddEditorDisplayInformation(object sender, string args)", "sender");
-
-                //Debug args
-                if (!areArgsSafe)
-                    ReferenceTools.DebugErrorNoValidReference("GameEvent", "AddEditorDisplayInformation(object sender, string args)", "args");
             }
         }
 
@@ -101,32 +80,15 @@ namespace MECS.GameEvents
         private void RemoveEditorDisplayInformation(object sender, string args)
         {
             //Make check of each value
-            bool isSenderSafe = ReferenceTools.IsValueSafe(sender),
-            areArgsSafe = ReferenceTools.IsValueSafe(args),
+            bool isSenderSafe = ReferenceTools.IsValueSafe(sender, " given sender isn't valid"),
+            areArgsSafe = ReferenceTools.IsValueSafe(args, " given args isn't valid"),
             areReferencesSafe = isSenderSafe && areArgsSafe;
 
             //Make updates of display
             if (areReferencesSafe)
-            {
                 //Make remove to subjectsNamesList
-                if (CollectionsTools.listTools.RemoveValue(subjectsNamesList, args,
-                new ComplexDebugInformation(this.GetType().Name,
-                "RemoveEditorDisplayInformation(object sender, string args)",
-                "couldnt remove args from subjectsNamesList")))
+                if (CollectionsTools.listTools.RemoveValue(subjectsNamesList, args, " couldnt remove args from subjectsNamesList"))
                     subjectsNames = subjectsNamesList.ToArray();
-            }
-            else
-            {
-                //Debug sender
-                if (!isSenderSafe)
-                    ReferenceTools.DebugErrorNoValidReference("GameEvent",
-                    "RemoveEditorDisplayInformation(object sender, string args)", "sender");
-
-                //Debug args
-                if (!areArgsSafe)
-                    ReferenceTools.DebugErrorNoValidReference("GameEvent",
-                    "RemoveEditorDisplayInformation(object sender, string args)", "args");
-            }
         }
 
         //IDisposable, clean all collections

@@ -1,7 +1,6 @@
 using MECS.Core;
 using MECS.Tools;
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Entities.Enums
 {
@@ -11,19 +10,7 @@ namespace MECS.Entities.Enums
     public class ScriptableEnumSystem : ASystem<IScriptableEnumData>
     {
         //ASystem, check if data values are valid
-        protected override bool IsValidData(Component entity, IScriptableEnumData data,
-        ComplexDebugInformation complexDebugInformation)
-        {
-            //Debug information
-            BasicDebugInformation basicDebugInformation =
-            new("ScriptableEnumSystem", "IsValidData(Component entity, IScriptableEnumData data)");
-            string entityName = entity.gameObject.name;
-
-            //Store result
-            bool areValid = ReferenceTools.IsValueSafe(data.ScriptableEnum,
-            complexDebugInformation.AddTempCustomText("given scriptable enum isn't safe on: " + entityName));
-
-            return areValid;
-        }
+        protected override bool IsValidData(Component entity, IScriptableEnumData data) =>
+            ReferenceTools.IsValueSafe(data.ScriptableEnum, "given scriptable enum isn't safe on: " + entity.gameObject.name);
     }
 }

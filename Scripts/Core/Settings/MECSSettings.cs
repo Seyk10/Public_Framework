@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using MECS.Collections;
 using MECS.MemoryManagement;
+using MECS.Patrons.Commands;
 using MECS.Tools;
 using MECS.Variables.References;
 using UnityEditor;
@@ -43,9 +44,7 @@ namespace MECS.Core
                 //Check dictionary
                 if (!ReferenceTools.IsValueSafe(systemsDictionary))
                     systemsDictionary = new LoadScriptableObjectsCommand(
-                        MECSDefaultSettingsNaming.systemsNaming.DEFAULT_SYSTEMS_SHORT_PATH,
-                        new ComplexDebugInformation("MECSSettings", "SystemsDictionary", "couldnt load from resources systems assets"))
-                        .Execute();
+                        MECSDefaultSettingsNaming.systemsNaming.DEFAULT_SYSTEMS_SHORT_PATH).Execute();
 
                 return systemsDictionary;
             }
@@ -60,28 +59,19 @@ namespace MECS.Core
                 //Check dictionary
                 if (!ReferenceTools.IsValueSafe(inputScriptableDictionary))
                 {
-                    //Basic debug information
-                    BasicDebugInformation basicDebugInformation =
-                    new BasicDebugInformation("MECSSettings", "InputScriptableDictionary");
-
                     //Load mouse assets
                     Dictionary<string, ScriptableObject> tempMouseAssets = new LoadScriptableObjectsCommand(
                         MECSDefaultSettingsNaming.inputScriptableObjectsNaming.pcInputScriptableObjectsNaming
-                        .mouseInputScriptableObjectsNaming.DEFAULT_MOUSE_INPUT_SHORT_PATH,
-                        new ComplexDebugInformation(basicDebugInformation,
-                        "couldnt load from resources mouse assets")).Execute(),
+                        .mouseInputScriptableObjectsNaming.DEFAULT_MOUSE_INPUT_SHORT_PATH).Execute(),
 
                     //Load keyboard assets
                     tempKeyboardAssets = new LoadScriptableObjectsCommand(
                         MECSDefaultSettingsNaming.inputScriptableObjectsNaming.pcInputScriptableObjectsNaming
-                        .keyboardInputScriptableObjectsNaming.DEFAULT_KEYBOARD_INPUT_SHORT_PATH,
-                        new ComplexDebugInformation(basicDebugInformation,
-                        "couldnt load from resources keyboard assets")).Execute();
+                        .keyboardInputScriptableObjectsNaming.DEFAULT_KEYBOARD_INPUT_SHORT_PATH).Execute();
 
                     //Merge dictionaries and set on inputScriptableDictionary
                     if (CollectionsTools.dictionaryTools.MergeDictionaries(tempMouseAssets, tempKeyboardAssets,
-                    out Dictionary<string, ScriptableObject> mergerMouseKeyboardDictionary,
-                    new ComplexDebugInformation(basicDebugInformation, "couldnt merge loaded input assets")))
+                    out Dictionary<string, ScriptableObject> mergerMouseKeyboardDictionary, " couldnt merge loaded input assets"))
                         inputScriptableDictionary = mergerMouseKeyboardDictionary;
                 }
 
@@ -108,7 +98,7 @@ namespace MECS.Core
 
                 //Avoid errors checking settings array
                 bool isArraySettingsSafe = CollectionsTools.arrayTools.
-                IsArrayContentSafe(settings, new ComplexDebugInformation(basicDebugInformation, "settings array isn't safe"));
+                IsArrayContentSafe(settings, " settings array isn't safe");
 
                 //Use settings
                 //Set target settings based on settings array, later set values on loader instance
@@ -125,17 +115,16 @@ namespace MECS.Core
                             //Check if there is other active settings
                             if (!targetSettings)
                                 targetSettings = setting;
+                            //Notify to debug manager
 #if UNITY_EDITOR
                             else
-                                DebugTools.DebugError(
-                                    new ComplexDebugInformation(basicDebugInformation, "there is more than one active settings"));
+                                Debug.LogError(" there is more than one active settings");
 #endif
                         }
                     }
 
                     //Check if there is any active setting
-                    if (ReferenceTools.IsValueSafe(targetSettings,
-                    new ComplexDebugInformation(basicDebugInformation, "there isn't any active settings")))
+                    if (ReferenceTools.IsValueSafe(targetSettings, " there isn't any active settings"))
                     {
                         //Store systems and managers
                         ScriptableObject[] systems = targetSettings.systems,
@@ -143,11 +132,9 @@ namespace MECS.Core
 
                         //Check if arrays are safe
                         bool isSystemsArraySafe = CollectionsTools.arrayTools.
-                        IsArrayContentSafe(systems, new ComplexDebugInformation(basicDebugInformation,
-                        "systems editor array isn't safe")),
+                        IsArrayContentSafe(systems, " systems editor array isn't safe"),
                         isManagersArraySafe = CollectionsTools.arrayTools.
-                        IsArrayContentSafe(managers, new ComplexDebugInformation(basicDebugInformation,
-                        "managers editor array isn't safe")),
+                        IsArrayContentSafe(managers, " managers editor array isn't safe"),
                         areArraysSafe = isSystemsArraySafe && isManagersArraySafe;
 
                         //Merge arrays and create loader
@@ -222,45 +209,40 @@ namespace MECS.Core
             }
 
             //Create folders tree
-            if (new CreateMECSFolderTreeCommand(new ComplexDebugInformation(basicDebugInformation,
-            "framework folders couldnt be created")).Execute())
+            if (new CreateMECSFolderTreeCommand().Execute())
             {
                 AssetDatabase.Refresh();
 
                 //Debug creation of folder
-                DebugTools.DebugLog(new ComplexDebugInformation(basicDebugInformation, "created root folder as " + MECSDefaultSettingsNaming.DEFAULT_SETTINGS_PATH + "."));
+                Debug.Log("created root folder as " + MECSDefaultSettingsNaming.DEFAULT_SETTINGS_PATH + ".");
 
                 //Create systems
                 Dictionary<string, ScriptableObject> tempSystemsDictionary =
-                new CreateMECSSystemsCommand(new ComplexDebugInformation(basicDebugInformation, "couldnt create systems assets"))
-                .Execute(),
+                new CreateMECSSystemsCommand().Execute(),
+
                 //Create managers
-                tempManagersDictionary = new CreateMECSManagersCommand(
-                    new ComplexDebugInformation(basicDebugInformation, "couldnt create managers assets"))
-                    .Execute(),
+                tempManagersDictionary = new CreateMECSManagersCommand().Execute(),
+
                 //Create scriptable objects
-                tempScriptableObjectsDictionary = new CreateMECSScriptableObjectsCommand(
-                    new ComplexDebugInformation(basicDebugInformation, "couldnt create scriptable objects assets"))
-                    .Execute(),
+                tempScriptableObjectsDictionary = new CreateMECSScriptableObjectsCommand().Execute(),
+
                 //Create input assets
-                tempInputScriptableDictionary = new CreateMECSInputScriptableCommands(
-                    new ComplexDebugInformation(basicDebugInformation, "couldnt create input assets"))
-                    .Execute();
+                tempInputScriptableDictionary = new CreateMECSInputScriptableCommands().Execute();
 
                 //Avoid errors based on stored dictionaries
                 bool areSystemsDictionaryValuesSafe =
                 //Get systems
                 CollectionsTools.dictionaryTools.GetAllValues(tempSystemsDictionary, out List<ScriptableObject> systemsValues,
-                new ComplexDebugInformation(basicDebugInformation, "systems dictionary values aren't safe")),
+                " systems dictionary values aren't safe"),
                 //Get managers
-                areManagersDictionaryValuesSafe = CollectionsTools.dictionaryTools.GetAllValues(tempManagersDictionary, out List<ScriptableObject> managersValues,
-                new ComplexDebugInformation(basicDebugInformation, "managers dictionary values aren't safe")),
+                areManagersDictionaryValuesSafe = CollectionsTools.dictionaryTools.GetAllValues(tempManagersDictionary,
+                out List<ScriptableObject> managersValues, " managers dictionary values aren't safe"),
                 //Get scriptable
-                areScriptableDictionaryValuesSafe = CollectionsTools.dictionaryTools.GetAllValues(tempScriptableObjectsDictionary, out List<ScriptableObject> scriptableValues,
-                new ComplexDebugInformation(basicDebugInformation, "scriptable dictionary values aren't safe")),
+                areScriptableDictionaryValuesSafe = CollectionsTools.dictionaryTools.GetAllValues(tempScriptableObjectsDictionary,
+                out List<ScriptableObject> scriptableValues, " scriptable dictionary values aren't safe"),
                 //Get inputs
-                areInputDictionaryValuesSafe = CollectionsTools.dictionaryTools.GetAllValues(tempInputScriptableDictionary, out List<ScriptableObject> inputValues,
-                new ComplexDebugInformation(basicDebugInformation, "input dictionary values aren't safe")),
+                areInputDictionaryValuesSafe = CollectionsTools.dictionaryTools.GetAllValues(tempInputScriptableDictionary,
+                out List<ScriptableObject> inputValues, " input dictionary values aren't safe"),
                 //Summarize
                 areAllValuesSafe = areSystemsDictionaryValuesSafe
                 && areManagersDictionaryValuesSafe
@@ -284,7 +266,8 @@ namespace MECS.Core
                     MECSSettings settingsAsset = ScriptableObject.CreateInstance<MECSSettings>();
 
                     //Create asset and save it
-                    AssetDatabase.CreateAsset(settingsAsset, MECSDefaultSettingsNaming.DEFAULT_SETTINGS_PATH + "/Default_MECS_Settings.asset");
+                    AssetDatabase.CreateAsset(settingsAsset, MECSDefaultSettingsNaming.DEFAULT_SETTINGS_PATH
+                    + "/Default_MECS_Settings.asset");
                     AssetDatabase.SaveAssets();
 
                     //Set settings configuration

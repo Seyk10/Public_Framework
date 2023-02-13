@@ -1,21 +1,14 @@
 #if UNITY_EDITOR
 using System;
-using System.IO;
 using MECS.Patrons.Commands;
-using MECS.Tools;
 using UnityEditor;
-using static MECS.Tools.DebugTools;
+using UnityEngine;
 
 namespace MECS.Core
 {
     //* Command used to create folders related to input assets
-    public class CreateMECSInputFoldersCommand : ACreateMECSFolderCommand, ICommandReturn<bool>
+    public class CreateMECSInputFoldersCommand : ICommandReturn<bool>
     {
-        //ACreateMECSFolderCommand, base builder
-        public CreateMECSInputFoldersCommand(DebugTools.ComplexDebugInformation complexDebugInformation) :
-        base(complexDebugInformation)
-        { }
-
         //ICommandReturn, notify end of command
         public event EventHandler<bool> CommandFinishedEvent = null;
 
@@ -33,12 +26,14 @@ namespace MECS.Core
                 MECSDefaultSettingsNaming.inputScriptableObjectsNaming.DEFAULT_INPUT_FOLDER_NAME);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
+
                 //PC folder
                 AssetDatabase.CreateFolder(MECSDefaultSettingsNaming.inputScriptableObjectsNaming.DEFAULT_INPUT_PATH,
                 MECSDefaultSettingsNaming.inputScriptableObjectsNaming
                 .pcInputScriptableObjectsNaming.DEFAULT_PC_INPUT_FOLDER_NAME);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
+
                 //Mouse folder
                 AssetDatabase.CreateFolder(MECSDefaultSettingsNaming.inputScriptableObjectsNaming
                 .pcInputScriptableObjectsNaming.DEFAULT_PC_INPUT_PATH,
@@ -46,6 +41,7 @@ namespace MECS.Core
                 .mouseInputScriptableObjectsNaming.DEFAULT_MOUSE_INPUT_FOLDER_NAME);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
+
                 //Keyboard folder
                 AssetDatabase.CreateFolder(MECSDefaultSettingsNaming.inputScriptableObjectsNaming
                 .pcInputScriptableObjectsNaming.DEFAULT_PC_INPUT_PATH,
@@ -55,12 +51,11 @@ namespace MECS.Core
                 AssetDatabase.Refresh();
 
                 //Debug information
-                DebugTools.DebugLog(new ComplexDebugInformation("CreateMECSFolderTreeCommand", "Execute()",
-                   "created system folders related to framework"));
+                Debug.Log("created system folders related to framework");
             }
             catch (Exception exception)
             {
-                DebugTools.DebugError(complexDebugInformation.AddTempCustomText(exception.ToString()));
+                Debug.LogError(exception.ToString());
                 areFoldersCreated = false;
             }
 

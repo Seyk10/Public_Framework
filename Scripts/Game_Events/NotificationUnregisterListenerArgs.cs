@@ -4,6 +4,7 @@ namespace MECS.GameEvents
     public class NotificationUnregisterListenerArgs : ANotificationListenerArgs
     {
         //Default builder
-        public NotificationUnregisterListenerArgs(GameEventListenerComponent component) : base(component) { }
+        public NotificationUnregisterListenerArgs(GameEventListenerComponent component, string debugMessage)
+        : base(component, debugMessage) { }
     }
 }

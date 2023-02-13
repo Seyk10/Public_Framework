@@ -1,5 +1,4 @@
 using MECS.Tools;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Patrons.StateMachine
 {
@@ -9,30 +8,15 @@ namespace MECS.Patrons.StateMachine
     {
         //Variables
         protected readonly T data = null;
-        protected readonly ComplexDebugInformation complexDebugInformation = null;
 
         //Default builder, save component reference of state
-        public AState(T data, ComplexDebugInformation complexDebugInformation)
-        {
+        public AState(T data) =>
             this.data = data;
-            this.complexDebugInformation = complexDebugInformation;
-        }
 
         //IValuesChecking method, check if given values on state are valid
-        public bool AreValuesValid()
-        {
-            //Basic debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name, "AreValuesValid()");
-
-            return
+        public virtual bool AreValuesValid() =>
             //Check data value
-            ReferenceTools.IsValueSafe(data,
-            new ComplexDebugInformation(basicDebugInformation, "given data isn't valid"))
-
-            //Check complex debug information
-            && ReferenceTools.IsValueSafe(complexDebugInformation,
-            new ComplexDebugInformation(basicDebugInformation, "given complexDebugInformation isn't valid"));
-        }
+            ReferenceTools.IsValueSafe(data, " given data isn't valid");
 
         //Methods
         //Set execution on variable and run coroutine

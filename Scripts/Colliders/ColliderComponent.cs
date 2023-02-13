@@ -1,7 +1,6 @@
 using MECS.Core;
 using MECS.Patrons.Commands;
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Colliders
 {
@@ -12,63 +11,27 @@ namespace MECS.Colliders
     [RequireComponent(typeof(Rigidbody))]
     public class ColliderComponent : AComponent<ColliderData, ColliderProfile>
     {
-        //Store last collision entity
-        private GameObject collisionEntity = null;
-
-        public GameObject CollisionEntity { get => collisionEntity; }
-
-        //MonoBehaviour, notify collision enter call back
-        private void OnCollisionEnter(Collision collision)
-        {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(entityDebugInformation, "OnCollisionEnter(Collision collision)");
-
-            //Notify collision
-            collisionEntity = collision.gameObject;
+        //MonoBehaviour method, notify collision enter call back
+        private void OnCollisionEnter(Collision collision) =>
             new NotificationCommand<NotifyCollisionArgs>(this,
-                new NotifyCollisionArgs(collision, null, EColliderCallback.Enter,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt notify collision system")), basicDebugInformation)
-                .Execute();
-        }
+                new NotifyCollisionArgs(collision, null, EColliderCallback.Enter, " couldnt notify collision system")).Execute();
 
-        //MonoBehaviour, notify collision exit call back
-        private void OnCollisionExit(Collision collision)
-        {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(entityDebugInformation, "OnCollisionExit(Collision collision)");
-
-            //Notify collision
-            collisionEntity = collision.gameObject;
+        //MonoBehaviour method, notify collision exit call back
+        private void OnCollisionExit(Collision collision) =>
             new NotificationCommand<NotifyCollisionArgs>(this,
-                new NotifyCollisionArgs(collision, null, EColliderCallback.Exit,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt notify collision system")), basicDebugInformation)
-                .Execute();
-        }
+                new NotifyCollisionArgs(collision, null, EColliderCallback.Exit, " couldnt notify collision system")).Execute();
 
-        //MonoBehaviour, notify trigger enter call back
-        private void OnTriggerEnter(Collider collider)
-        {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(entityDebugInformation, "OnTriggerEnter(Collider collider)");
-
+        //MonoBehaviour method, notify trigger enter call back
+        private void OnTriggerEnter(Collider collider) =>
             //Notify collision
             new NotificationCommand<NotifyCollisionArgs>(this,
-                new NotifyCollisionArgs(null, collider, EColliderCallback.Enter,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt notify collision system")), basicDebugInformation)
-                .Execute();
-        }
+                new NotifyCollisionArgs(null, collider, EColliderCallback.Enter, " couldnt notify collision system")).Execute();
 
-        //MonoBehaviour, notify trigger exit call back
-        private void OnTriggerExit(Collider collider)
-        {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(entityDebugInformation, "OnTriggerExit(Collider collider)");
 
+        //MonoBehaviour method, notify trigger exit call back
+        private void OnTriggerExit(Collider collider) =>
             //Notify collision
             new NotificationCommand<NotifyCollisionArgs>(this,
-                new NotifyCollisionArgs(null, collider, EColliderCallback.Exit,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt notify collision system")), basicDebugInformation)
-                .Execute();
-        }
+                new NotifyCollisionArgs(null, collider, EColliderCallback.Exit, " couldnt notify collision system")).Execute();
     }
 }

@@ -44,13 +44,8 @@ namespace MECS.Physics.Casting
         //ISetState, set state machine states on data structure
         public void InitializeStateMachineStates(object sender, ResponsiveDictionaryArgs<ICastingData, MonoBehaviour> args)
         {
-            //Basic debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-            "InitializeStateMachineStates(object sender, ResponsiveDictionaryArgs<ICastingData, MonoBehaviour> args)");
-
             //Check parameters
-            if (ReferenceTools.AreEventParametersValid(sender, args,
-            new ComplexDebugInformation(basicDebugInformation, "given parameters aren't valid")))
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given parameters aren't valid"))
             {
                 //Store data
                 ICastingData data = args.key;
@@ -61,10 +56,8 @@ namespace MECS.Physics.Casting
                     data.IsCastingInitialized = true;
 
                     //Create states
-                    DetectingCastState detectingCastState = new DetectingCastState(args.value, data,
-                    args.complexDebugInformation.AddTempCustomText("couldn't set detecting cast state"));
-                    SleepingState sleepingState = new SleepingState(args.value, data,
-                    args.complexDebugInformation.AddTempCustomText("couldn't set sleeping state"));
+                    DetectingCastState detectingCastState = new DetectingCastState(args.value, data);
+                    SleepingState sleepingState = new SleepingState(args.value, data);
 
                     //Add states
                     data.CastingStateMachine.AddState(detectingCastState);
@@ -99,29 +92,27 @@ namespace MECS.Physics.Casting
                 SetCurrentState();
             else
             {
-                InitializeStateMachineStates(sender, new ResponsiveDictionaryArgs<ICastingData, MonoBehaviour>(data, (MonoBehaviour)sender));
-                SetCurrentState();
+                //Convert sender to monoBehaviour
+                if (TypeTools.ConvertToType(sender, out MonoBehaviour monoBehaviour, " couldnt convert sender to MonoBehaviour"))
+                {
+                    InitializeStateMachineStates(sender,
+                    new ResponsiveDictionaryArgs<ICastingData, MonoBehaviour>(data, monoBehaviour, " couldnt initialize state machine"));
+                    SetCurrentState();
+                }
             }
         }
 
         //ASystem, checks if ICastingData values are valid
-        protected override bool IsValidData(Component entityComponent, ICastingData data,
-        ComplexDebugInformation complexDebugInformation)
+        protected override bool IsValidData(Component entityComponent, ICastingData data)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation =
-            new(this.GetType().Name, "IsValidData(Component entity ICastingData data)");
-
             //Return value            
             bool isDataSafe =
                 //Check parameters values
                 //Check entityComponent
-                ReferenceTools.IsValueSafe(entityComponent,
-                new ComplexDebugInformation(basicDebugInformation, "given entityComponent isn't valid"))
+                ReferenceTools.IsValueSafe(entityComponent, " given entityComponent isn't valid")
 
                 //Check data
-                && ReferenceTools.IsValueSafe(data,
-                new ComplexDebugInformation(basicDebugInformation, "given state machine isn't valid"));
+                && ReferenceTools.IsValueSafe(data, " given state machine isn't valid");
 
             //Makes all the checks if references are safe
             if (isDataSafe)
@@ -131,7 +122,7 @@ namespace MECS.Physics.Casting
 
                 //Check casting machine
                 isDataSafe = ReferenceTools.IsValueSafe(data.CastingStateMachine,
-                complexDebugInformation.AddTempCustomText("given state machine isn't valid on entity: " + entityName));
+                " given state machine isn't valid on entity: " + entityName);
 
                 //Itinerate origin values 
                 foreach (var originReference in data.OriginTransforms)
@@ -140,9 +131,9 @@ namespace MECS.Physics.Casting
                         isDataSafe = false;
 
                 //Should check scale
-                bool checkScale = data.CastingShape == EPhysicsCastingShape.Box
-                || data.CastingShape == EPhysicsCastingShape.Sphere
-                || data.CastingShape == EPhysicsCastingShape.Capsule;
+                bool checkScale = data.CastingShape.Equals(EPhysicsCastingShape.Box)
+                || data.CastingShape.Equals(EPhysicsCastingShape.Sphere)
+                || data.CastingShape.Equals(EPhysicsCastingShape.Capsule);
 
                 //Check scale reference
                 if (isDataSafe && checkScale && !data.ScaleTransform.CheckEditorReferences())
@@ -153,13 +144,14 @@ namespace MECS.Physics.Casting
                     isDataSafe = false;
 
                 //Check orientation on box casting
-                if (isDataSafe && data.CastingShape == EPhysicsCastingShape.Box && !data.OrientationQuaternion.CheckEditorReferences())
+                if (isDataSafe && data.CastingShape.Equals(EPhysicsCastingShape.Box)
+                && !data.OrientationQuaternion.CheckEditorReferences())
                     isDataSafe = false;
 
                 //Check distance
                 if (isDataSafe)
                     isDataSafe = NumericTools.IsComparativeCorrect(data.MaxDistance, 0, ENumericConditional.Bigger,
-                    complexDebugInformation.AddTempCustomText("given distance must be bigger than 0 on entity: " + entityName));
+                    " given distance must be bigger than 0 on entity: " + entityName);
             }
 
             return isDataSafe;
@@ -168,44 +160,26 @@ namespace MECS.Physics.Casting
         //Response to casting detections events
         private void ResponseCastingDetection(object sender, CastingDetectionArgs args)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new("CastingSystem",
-            "ResponseCastingDetection(object sender, CastingDetectionArgs args)");
-
             //Check parameters
-            if (ReferenceTools.AreEventParametersValid(sender, args,
-            new ComplexDebugInformation(basicDebugInformation, "given parameters aren't valid")))
-            {
-                //Share to filter system values
-                IFilterData[] filterData = { args.iCastingData as IFilterData };
-
-                //Check if conversion is valid
-                if (filterData != null)
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given parameters aren't valid"))
+                //Convert data to filter data type
+                if (TypeTools.ConvertToType(args.castingData, out IFilterData filterData,
+                " couldnt convert castingData to filterData"))
                     //Notify filter system
                     new NotificationCommand<NotifyFilterSystemArgs>(sender,
-                        new NotifyFilterSystemArgs(args.raycastHit.collider.gameObject, filterData,
-                        args.complexDebugInformation.AddTempCustomText("couldnt notify filter system")), basicDebugInformation)
-                        .Execute();
-#if UNITY_EDITOR
-                else Debug.LogWarning("Warning: Failed to convert ICastingData on IFilterData");
-#endif
-            }
+                        new NotifyFilterSystemArgs(args.raycastHit.collider.gameObject, new IFilterData[] { filterData },
+                        args.debugMessage + " couldnt notify filter system")).Execute();
         }
 
         //ISetState, set states from editor commands
         public void RespondEditorStateCommand<T3>(object sender, MonoBehaviour component) where T3 : ACastingState
         {
             //Convert to target component
-            CastingComponent castingComponent = component as CastingComponent;
-
-            //Avoid errors
-            if (castingComponent != null)
+            if (TypeTools.ConvertToType(component, out CastingComponent castingComponent,
+            " couldnt convert component to castingComponent"))
                 //Itinerate data on component
-                foreach (ICastingData data in castingComponent.DataReference.GetValue())
+                foreach (ICastingData data in castingComponent.Data)
                     SetStateResponse<T3>(component, data);
-#if UNITY_EDITOR
-            else Debug.LogWarning("Warning: Failed to convert MonoBehaviour to casting component");
-#endif
         }
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using MECS.Core;
 using MECS.Events;
-using MECS.Tools;
 using MECS.Variables.References;
 using UnityEngine;
 
@@ -11,6 +10,7 @@ namespace MECS.Conditionals
     [Serializable]
     public class ConditionalData : AData, IConditionalData, IEventData
     {
+        #region CONDITIONAL_VALUES
         //Editor variables  
         [Header("IConditionalData values")]
         [SerializeField] private NumericConditional[] numericConditionals = null;
@@ -25,17 +25,21 @@ namespace MECS.Conditionals
         public BoolReference UseStringConditionals => useStringConditionals;
         [SerializeField] private BoolReference useBoolConditionals = null;
         public BoolReference UseBoolConditionals => useBoolConditionals;
+        #endregion
 
+        #region EVENT_VALUES
         [Header("IEventData values")]
         [SerializeField] private EventReference eventReference = null;
         public EventReference EventReference => eventReference;
+        #endregion
 
+        #region ADATA_LIFE_CYCLE_NOTIFICATION_METHODS
         //AData method, notify data awake
-        public override void NotifyDataAwake(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataAwake(MonoBehaviour sender)
         {
             //Args to send
-            EntityAwakeArgs<IConditionalData> conditionalArgs = new((IConditionalData)this, complexDebugInformation);
-            EntityAwakeArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityAwakeArgs<IConditionalData> conditionalArgs = new((IConditionalData)this, " couldnt notify IConditionalData awake");
+            EntityAwakeArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify IEventData awake");
 
             //Notify LifeCycleData 
             NotifyDataPhase<EntityAwakeArgs<IConditionalData>, IConditionalData>(sender, conditionalArgs);
@@ -44,11 +48,11 @@ namespace MECS.Conditionals
         }
 
         //AData method, notify data enable
-        public override void NotifyDataEnable(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataEnable(MonoBehaviour sender)
         {
             //Args to send
-            EntityEnableArgs<IConditionalData> conditionalArgs = new((IConditionalData)this, complexDebugInformation);
-            EntityEnableArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityEnableArgs<IConditionalData> conditionalArgs = new((IConditionalData)this, " couldnt notify IConditionalData enable");
+            EntityEnableArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify IEventData enable");
 
             //Notify LifeCycleData 
             NotifyDataPhase<EntityEnableArgs<IConditionalData>, IConditionalData>(sender, conditionalArgs);
@@ -57,11 +61,12 @@ namespace MECS.Conditionals
         }
 
         //AData method, notify data disable
-        public override void NotifyDataDisable(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataDisable(MonoBehaviour sender)
         {
             //Args to send
-            EntityDisableArgs<IConditionalData> conditionalArgs = new((IConditionalData)this, complexDebugInformation);
-            EntityDisableArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityDisableArgs<IConditionalData> conditionalArgs = new((IConditionalData)this,
+            " couldnt notify IConditionalData disable");
+            EntityDisableArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify IEventData disable");
 
             //Notify LifeCycleData 
             NotifyDataPhase<EntityDisableArgs<IConditionalData>, IConditionalData>(sender, conditionalArgs);
@@ -70,16 +75,18 @@ namespace MECS.Conditionals
         }
 
         //AData method, notify data destroy
-        public override void NotifyDataDestroy(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataDestroy(MonoBehaviour sender)
         {
             //Args to send
-            EntityDestroyArgs<IConditionalData> conditionalArgs = new((IConditionalData)this, complexDebugInformation);
-            EntityDestroyArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityDestroyArgs<IConditionalData> conditionalArgs = new((IConditionalData)this,
+            " couldnt notify IConditionalData destroy");
+            EntityDestroyArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify IEventData destroy");
 
             //Notify LifeCycleData 
             NotifyDataPhase<EntityDestroyArgs<IConditionalData>, IConditionalData>(sender, conditionalArgs);
             //Notify IEventData
             NotifyDataPhase<EntityDestroyArgs<IEventData>, IEventData>(sender, eventArgs);
         }
+        #endregion
     }
 }

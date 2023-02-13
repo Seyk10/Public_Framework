@@ -2,7 +2,6 @@ using System;
 using MECS.Collections;
 using MECS.Patrons.Commands;
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Conditionals
 {
@@ -19,12 +18,10 @@ namespace MECS.Conditionals
         public void Execute(ConditionalComponent parameter)
         {
             //Store data arrays
-            IConditionalData[] dataArray = parameter.DataReference.GetValue();
+            IConditionalData[] dataArray = parameter.Data;
 
             //Notify to check given data
-            if (CollectionsTools.arrayTools.IsArrayContentSafe(dataArray,
-            new ComplexDebugInformation(this.GetType().Name, "Execute(ConditionalComponent parameter)",
-            "given dataArray isn't safe")))
+            if (CollectionsTools.arrayTools.IsArrayContentSafe(dataArray, " given dataArray isn't safe"))
                 foreach (IConditionalData data in dataArray)
                     CheckValuesEvent?.Invoke(parameter, data);
 

@@ -2,7 +2,6 @@
 using System;
 using MECS.Patrons.Commands;
 using MECS.Collections;
-using static MECS.Tools.DebugTools;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -13,11 +12,6 @@ namespace MECS.Core
     public class CreateMECSInputScriptableCommands : ACreateMECSScriptableObjectCommand,
     ICommandReturn<Dictionary<string, ScriptableObject>>
     {
-        //ACreateMECSScriptableObjectCommand, default builder
-        public CreateMECSInputScriptableCommands(ComplexDebugInformation complexDebugInformation) :
-        base(complexDebugInformation)
-        { }
-
         //ICommandReturn, notify end of command
         public event EventHandler<Dictionary<string, ScriptableObject>> CommandFinishedEvent = null;
 
@@ -26,11 +20,10 @@ namespace MECS.Core
         {
             //Store PC assets
             Dictionary<string, ScriptableObject> pcAssets =
-            new CreateMECSPCInputCommand(complexDebugInformation).Execute();
+            new CreateMECSPCInputCommand().Execute();
 
             //Check dictionary values
-            if (CollectionsTools.dictionaryTools.AreValuesSafe(pcAssets,
-            complexDebugInformation.AddTempCustomText("pc assets aren't safe")))
+            if (CollectionsTools.dictionaryTools.IsDictionaryContentSafe(pcAssets, " pc assets aren't safe"))
                 assetsDictionary = pcAssets;
 
             //Notify end of command

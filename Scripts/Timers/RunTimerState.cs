@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
-using MECS.Patrons.Commands;
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Timers
 {
@@ -13,8 +11,7 @@ namespace MECS.Timers
         public event EventHandler<ITimerData> TimerEndsEvent = null;
 
         //Default builder
-        public RunTimerState(MonoBehaviour monoBehaviour, ITimerData data, ComplexDebugInformation complexDebugInformation)
-        : base(monoBehaviour, data, complexDebugInformation) { }
+        public RunTimerState(MonoBehaviour monoBehaviour, ITimerData data) : base(monoBehaviour, data) { }
 
         //ATimerState, start coroutine
         public override void RunState()

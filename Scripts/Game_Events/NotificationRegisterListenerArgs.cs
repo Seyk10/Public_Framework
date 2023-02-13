@@ -4,6 +4,8 @@ namespace MECS.GameEvents
     public class NotificationRegisterListenerArgs : ANotificationListenerArgs
     {
         //Default builder
-        public NotificationRegisterListenerArgs(GameEventListenerComponent component) : base(component) { }
+        public NotificationRegisterListenerArgs(GameEventListenerComponent component, string debugMessage) :
+        base(component, debugMessage)
+        { }
     }
 }

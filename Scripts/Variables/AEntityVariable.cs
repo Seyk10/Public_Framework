@@ -1,6 +1,5 @@
 using MECS.Tools;
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Variables
 {
@@ -15,14 +14,8 @@ namespace MECS.Variables
         //AVariable, override to debug entity information
         public override void SetValue(T value)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation =
-            new BasicDebugInformation(this.GetType().ToString(), "SetValue(T value)");
-            string variableName = this.name;
-
             //Check value
-            bool isValidVariable = ReferenceTools.IsValueSafe(value,
-            new ComplexDebugInformation(basicDebugInformation, "given variable to" + this.name + " isn't valid."));
+            bool isValidVariable = ReferenceTools.IsValueSafe(value, " given variable to" + this.name + " isn't valid.");
 
             //Set value
             if (isValidVariable)

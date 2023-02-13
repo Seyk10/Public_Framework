@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
+using MECS.Collections;
 using MECS.Events.Tracking;
-using MECS.GameEvents;
 using MECS.Tools;
 using UnityEngine;
 using UnityEngine.Events;
@@ -39,14 +39,12 @@ namespace MECS.Events
         public static event EventHandler<EventReferenceInfoArgs> EventReferenceRaisedInfoEvent = null;
 
         //Method, raise all the events and notify it
-        public void RaiseEvents(string raisingEntityName, string raisingComponentName,
-        ComplexDebugInformation complexDebugInformation)
+        public void RaiseEvents(string raisingEntityName, string raisingComponentName, string debugMessage)
         {
             //Check given parameters
             bool areParametersValid =
-                ReferenceTools.AreValuesSafe(new object[] { raisingEntityName, raisingComponentName, complexDebugInformation },
-                new ComplexDebugInformation(this.GetType().Name, "RaiseEvents(string raisingEntityName, string raisingComponentName, "
-                + "ComplexDebugInformation complexDebugInformation", "given parameters aren't safe"));
+                CollectionsTools.arrayTools.HasArrayObject(new object[] { raisingEntityName, raisingComponentName },
+                debugMessage + " given parameters aren't safe");
 
             //Raise if parameters are ok
             if (areParametersValid)

@@ -19,11 +19,13 @@ namespace MECS.Colliders
             [SerializeField] private ColliderArrayReference collidersReference = null;
             [SerializeField] private EColliderMode colliderMode = EColliderMode.Trigger;
             [SerializeField] private EColliderCallback[] colliderCallbacks = null;
+            [SerializeField] public GameObject lastCollisionEntity = null;
 
             //Attributes
             public ColliderArrayReference CollidersReference => collidersReference;
             public EColliderMode EColliderMode => colliderMode;
             public EColliderCallback[] EColliderCallbacks => colliderCallbacks;
+            public GameObject LastCollisionEntity { get => lastCollisionEntity; set => lastCollisionEntity = value; }
 
             //Default builder
             public ColliderTrackingInfo(string entityName, IColliderData colliderData) : base(entityName)
@@ -31,6 +33,7 @@ namespace MECS.Colliders
                 collidersReference = colliderData.CollidersReference;
                 colliderMode = colliderData.EColliderMode;
                 colliderCallbacks = colliderData.EColliderCallbacks;
+                lastCollisionEntity = colliderData.LastCollisionEntity;
             }
         }
     }

@@ -1,4 +1,5 @@
 using MECS.Variables.References;
+using UnityEngine;
 
 namespace MECS.Colliders
 {
@@ -9,5 +10,6 @@ namespace MECS.Colliders
         public ColliderArrayReference CollidersReference { get; }
         public EColliderMode EColliderMode { get; }
         public EColliderCallback[] EColliderCallbacks { get; }
+        public GameObject LastCollisionEntity { get; set; }
     }
 }

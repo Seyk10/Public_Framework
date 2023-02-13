@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
+using MECS.Tools;
 using MECS.Variables.References;
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Physics.Casting
 {
@@ -13,82 +13,54 @@ namespace MECS.Physics.Casting
         public event EventHandler<CastingDetectionArgs> RaycastHitEvent = null;
 
         //ACastingState, default builder
-        public DetectingCastState(MonoBehaviour monoBehaviour, ICastingData data, ComplexDebugInformation complexDebugInformation)
-        : base(monoBehaviour, data, complexDebugInformation) { }
+        public DetectingCastState(MonoBehaviour monoBehaviour, ICastingData data) : base(monoBehaviour, data) { }
 
-        //ACastingState, run loop process
+        //ACastingState method, run loop process
         public override void RunState()
         {
             //Avoid loop casting if there are missing references necessary for casting type
             bool CanCast()
             {
-                bool canCast = true;
+                bool canCast = true,
 
-                //Values used on basic shapes castings
-                bool CanCastShapes()
-                {
-                    bool canCastShapes = true;
-
-                    //Check if have scale value
-                    if (data.CastingShape != EPhysicsCastingShape.Ray && !data.ScaleTransform.CheckEditorReferences())
-                    {
-                        canCastShapes = false;
-#if UNITY_EDITOR
-                        Debug.LogWarning("Warning: Its necessary a scale transform on casting shapes.");
-#endif
-                    }
-
-                    return canCastShapes;
-                }
+                //Check if can cast shapes
+                canCastShapes =
+                    //Check casting type
+                    !data.CastingShape.Equals(EPhysicsCastingShape.Ray)
+                    //Check editor references
+                    && data.ScaleTransform.CheckEditorReferences();
 
                 //Check if have origin value
-                if (data.OriginTransforms.Length > 0)
-                    if (!data.OriginTransforms[0].CheckEditorReferences())
-                    {
-                        canCast = false;
-#if UNITY_EDITOR
-                        Debug.LogWarning("Warning: Its necessary a origin transform on casting shapes.");
-#endif
-                    }
+                if (NumericTools.IsComparativeCorrect(data.OriginTransforms.Length, 0,
+                Conditionals.ENumericConditional.Bigger, " data.OriginTransforms must have at least one value"))
+                    canCast = data.OriginTransforms[0].CheckEditorReferences();
 
                 //Check if have direction value
-                if (!data.DirectionTransform.CheckEditorReferences())
-                {
-                    canCast = false;
-#if UNITY_EDITOR
-                    Debug.LogWarning("Warning: Its necessary a direction transform on casting shapes.");
-#endif
-                }
+                canCast = data.DirectionTransform.CheckEditorReferences();
 
-                //Check shapes
-                CanCastShapes();
+                //Check casting shapes if can cast it
+                if (canCastShapes && canCast)
+                    //Check casting type
+                    switch (data.CastingShape)
+                    {
+                        case EPhysicsCastingShape.Box:
+                            canCast = data.ScaleTransform.CheckEditorReferences()
+                            && data.DirectionTransform.CheckEditorReferences()
+                            && data.OrientationQuaternion.CheckEditorReferences();
+                            break;
 
-                //Check casting type
-                switch (data.CastingShape)
-                {
-                    case EPhysicsCastingShape.Box:
-                        canCast = data.ScaleTransform.CheckEditorReferences()
-                        && data.DirectionTransform.CheckEditorReferences()
-                        && data.OrientationQuaternion.CheckEditorReferences();
-                        break;
+                        case EPhysicsCastingShape.Capsule:
+                            //Check if origin has 2 values
+                            if (NumericTools.IsComparativeCorrect(data.OriginTransforms.Length, 2,
+                            Conditionals.ENumericConditional.Equal, " origins on Capsule shape must have 2 values"))
 
-                    case EPhysicsCastingShape.Capsule:
-                        //Check if origin has 2 values
-                        if (data.OriginTransforms.Length == 2)
-                        {
-                            //Itinerate origins
-                            foreach (TransformReference originReference in data.OriginTransforms)
-                            {
-                                //Check editor references
-                                if (!originReference.CheckEditorReferences())
-                                    canCast = false;
-                            }
-                        }
-#if UNITY_EDITOR
-                        else Debug.LogWarning("Warning: Origins on Capsule shape must have 2 values");
-#endif
-                        break;
-                }
+                                //Itinerate origins
+                                foreach (TransformReference originReference in data.OriginTransforms)
+                                    //Check editor references
+                                    if (!originReference.CheckEditorReferences())
+                                        canCast = false;
+                            break;
+                    }
 
                 return canCast;
             }
@@ -110,9 +82,10 @@ namespace MECS.Physics.Casting
                                 if (UnityEngine.Physics.BoxCast(data.OriginTransforms[0].Value.position,
                                 data.ScaleTransform.Value.localScale, data.DirectionTransform.Value.position,
                                 out RaycastHit boxRaycastHit, data.OrientationQuaternion.Value, data.MaxDistance, ~data.IgnoreLayers))
+
+                                    //Invoke hit event with casting values
                                     RaycastHitEvent?.Invoke(monoBehaviour,
-                                    new CastingDetectionArgs(boxRaycastHit, data,
-                                    complexDebugInformation.AddTempCustomText("couldnt notify casting detection")));
+                                    new CastingDetectionArgs(boxRaycastHit, data, " couldnt notify casting detection"));
                                 break;
 
                             //Check casts with capsule shape
@@ -121,16 +94,20 @@ namespace MECS.Physics.Casting
                                 data.OriginTransforms[1].Value.position,
                                 data.ScaleTransform.Value.localScale.magnitude, data.DirectionTransform.Value.position,
                                 out RaycastHit capsuleRaycastHit, data.MaxDistance, ~data.IgnoreLayers))
+
+                                    //Invoke hit event with casting values
                                     RaycastHitEvent?.Invoke(monoBehaviour, new CastingDetectionArgs(capsuleRaycastHit, data,
-                                    complexDebugInformation.AddTempCustomText("couldnt notify casting detection")));
+                                    " couldnt notify casting detection"));
                                 break;
 
                             //Check casts with ray shape
                             case EPhysicsCastingShape.Ray:
                                 if (UnityEngine.Physics.Raycast(data.OriginTransforms[0].Value.position,
                                  data.DirectionTransform.Value.position, out RaycastHit raycastHit, data.MaxDistance, ~data.IgnoreLayers))
+
+                                    //Invoke hit event with casting values
                                     RaycastHitEvent?.Invoke(monoBehaviour, new CastingDetectionArgs(raycastHit, data,
-                                    complexDebugInformation.AddTempCustomText("couldnt notify casting detection")));
+                                    " couldnt notify casting detection"));
                                 break;
 
                             //Check casts with sphere shape
@@ -138,8 +115,10 @@ namespace MECS.Physics.Casting
                                 if (UnityEngine.Physics.SphereCast(data.OriginTransforms[0].Value.position,
                                 data.ScaleTransform.Value.localScale.magnitude / 2,
                                 data.DirectionTransform.Value.position, out RaycastHit sphereRaycastHit, data.MaxDistance, ~data.IgnoreLayers))
+
+                                    //Invoke hit event with casting values
                                     RaycastHitEvent?.Invoke(monoBehaviour, new CastingDetectionArgs(sphereRaycastHit, data,
-                                    complexDebugInformation.AddTempCustomText("couldnt notify casting detection")));
+                                    " couldnt notify casting detection"));
                                 break;
                         }
 
@@ -150,9 +129,6 @@ namespace MECS.Physics.Casting
                 //Store on data
                 data.CastingExecution = monoBehaviour.StartCoroutine(CastingLoop());
             }
-#if UNITY_EDITOR
-            else Debug.LogWarning("Warning: There aren't the necessary values to target casting shape.");
-#endif
         }
     }
 }

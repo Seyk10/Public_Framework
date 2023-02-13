@@ -7,7 +7,6 @@ using MECS.Timers;
 using MECS.Tools;
 using UnityEngine;
 using static MECS.Core.MECSDefaultSettingsNaming.ScriptableObjectsNaming.TimerScriptableObjectsNaming;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Core
 {
@@ -16,10 +15,6 @@ namespace MECS.Core
     public class CreateMECSTimerScriptableCommands : ACreateMECSScriptableObjectCommand,
     ICommandReturn<Dictionary<string, ScriptableObject>>
     {
-        //ACreateMECSScriptableObjectCommand, default builder
-        public CreateMECSTimerScriptableCommands(ComplexDebugInformation complexDebugInformation) : base(complexDebugInformation)
-        { }
-
         //ICommandReturn, notify end of command
         public event EventHandler<Dictionary<string, ScriptableObject>> CommandFinishedEvent = null;
 
@@ -41,33 +36,22 @@ namespace MECS.Core
             //Create initialize timer asset
             bool couldntCreateAssets = CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.INITIALIZE_TIMER_COMMAND_NAME,
             new CreatePersistentScriptableObjectCommand<InitializeTimerCommand>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.INITIALIZE_TIMER_COMMAND_NAME),
-            path, assetsNaming.INITIALIZE_TIMER_COMMAND_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.INITIALIZE_TIMER_COMMAND_NAME).Execute())
 
             //Create pause timer asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.PAUSE_TIMER_COMMAND_NAME,
             new CreatePersistentScriptableObjectCommand<PauseTimerCommand>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.PAUSE_TIMER_COMMAND_NAME),
-            path, assetsNaming.PAUSE_TIMER_COMMAND_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.PAUSE_TIMER_COMMAND_NAME).Execute())
 
             //Create run timer asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.RUN_TIMER_COMMAND_NAME,
             new CreatePersistentScriptableObjectCommand<RunTimerCommand>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.RUN_TIMER_COMMAND_NAME),
-            path, assetsNaming.RUN_TIMER_COMMAND_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.RUN_TIMER_COMMAND_NAME).Execute())
 
             //Create stop timer asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.STOP_TIMER_COMMAND_NAME,
             new CreatePersistentScriptableObjectCommand<StopTimerCommand>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.STOP_TIMER_COMMAND_NAME),
-            path, assetsNaming.STOP_TIMER_COMMAND_NAME).Execute(),
-            complexDebugInformation);
+            (path, assetsNaming.STOP_TIMER_COMMAND_NAME).Execute());
 
             //Set on final dictionary values
             if (couldntCreateAssets)

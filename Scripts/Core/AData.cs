@@ -2,7 +2,6 @@ using System;
 using MECS.Patrons.Commands;
 using MECS.Tools;
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Core
 {
@@ -21,27 +20,22 @@ namespace MECS.Core
 
         protected void NotifyDataPhase<T, T2>(MonoBehaviour sender, T args) where T : AEntityArgs<T2>
         {
-            //Basic debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-            "NotifyDataPhase<T, T2>(MonoBehaviour sender, T args) where T : AEntityArgs<T2>");
-
             //Check if event notification parameters are valid
-            if (ReferenceTools.AreEventParametersValid(sender, args,
-            new ComplexDebugInformation(basicDebugInformation, "data phase notification event parameters aren't valid")))
+            if (ReferenceTools.AreEventParametersValid(sender, args, " data phase notification event parameters aren't valid"))
                 //Notify data phase
-                new NotificationCommand<T>(sender, args, basicDebugInformation).Execute();
+                new NotificationCommand<T>(sender, args).Execute();
         }
 
         //Method, used to notify awake data phases
-        public abstract void NotifyDataAwake(MonoBehaviour sender, ComplexDebugInformation complexDebugInformation);
+        public abstract void NotifyDataAwake(MonoBehaviour sender);
 
         //Method, used to notify enable data phases
-        public abstract void NotifyDataEnable(MonoBehaviour sender, ComplexDebugInformation complexDebugInformation);
+        public abstract void NotifyDataEnable(MonoBehaviour sender);
 
         //Method, used to notify awake disable phases
-        public abstract void NotifyDataDisable(MonoBehaviour sender, ComplexDebugInformation complexDebugInformation);
+        public abstract void NotifyDataDisable(MonoBehaviour sender);
 
         //Method, used to notify awake data phases
-        public abstract void NotifyDataDestroy(MonoBehaviour sender, ComplexDebugInformation complexDebugInformation);
+        public abstract void NotifyDataDestroy(MonoBehaviour sender);
     }
 }

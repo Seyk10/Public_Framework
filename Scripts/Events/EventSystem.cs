@@ -2,7 +2,6 @@ using MECS.Core;
 using MECS.Patrons.Commands;
 using MECS.Tools;
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Events
 {
@@ -32,35 +31,29 @@ namespace MECS.Events
         }
 
         //ASystem, used to check if data values are valid
-        protected override bool IsValidData(Component entity, IEventData data, ComplexDebugInformation complexDebugInformation)
+        protected override bool IsValidData(Component entity, IEventData data)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new("EventSystem", "IsValidData(Component entity, IEventData data)");
-            string entityName = entity.gameObject.name;
-
             //Value to return
             //Check full event reference
             bool isCorrectData =
                 //Check sender parameter
-                ReferenceTools.IsValueSafe(entity, new ComplexDebugInformation(basicDebugInformation, "sender isn't safe"))
+                ReferenceTools.IsValueSafe(entity, " sender isn't safe")
 
                 //Check data parameter
-                && ReferenceTools.IsValueSafe(data, new ComplexDebugInformation(basicDebugInformation, "data isn't safe"))
+                && ReferenceTools.IsValueSafe(data, " data isn't safe")
 
                 //Check data values
                 && ReferenceTools.IsValueSafe(data.EventReference,
-                complexDebugInformation.AddTempCustomText("given event reference isn't safe on entity: "
-                + entityName))
+                " given event reference isn't safe on entity: " + entity.gameObject.name)
 
                 //Check editor event reference
                 && ReferenceTools.IsValueSafe(data.EventReference.UnityEventResponse,
-                complexDebugInformation.AddTempCustomText("given UnityEventResponse isn't safe on entity: "
-                + entityName));
+                " given UnityEventResponse isn't safe on entity: " + entity.gameObject.name);
 
             //Check action event reference if its necessary
             if (isCorrectData && data.EventReference.IsActionOnUse)
                 isCorrectData = ReferenceTools.IsValueSafe(data.EventReference.ActionResponse,
-                complexDebugInformation.AddTempCustomText("given ActionResponse isn't safe on entity: " + entityName));
+                " given ActionResponse isn't safe on entity: " + entity.gameObject.name);
 
             return isCorrectData;
         }
@@ -68,19 +61,15 @@ namespace MECS.Events
         //ASystem, invoke values of IEventData
         private void RespondEventsNotification(object sender, NotifyEventsInvocationArgs args)
         {
-            //Debug values
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-            "RespondEventsNotification(object sender, NotifyEventsInvocationArgs args)");
-
             //Check if event parameters are safe
             bool areParametersSafe = ReferenceTools.AreEventParametersValid(sender, args,
-            new ComplexDebugInformation(basicDebugInformation, "parameters aren't safe"));
+            args.debugMessage + " parameters aren't safe");
 
             //Avoid parameters errors
             if (areParametersSafe)
                 //Check if sender is component and get values
                 if (TypeTools.ConvertToType<Component>(sender, out Component entityComponent,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt convert sender to component")))
+                args.debugMessage + " couldnt convert sender to component"))
                 {
                     //Store values to avoid over flow on iteration 
                     string entityName = entityComponent.gameObject.name,
@@ -89,11 +78,10 @@ namespace MECS.Events
                     //Itinerate data and raise
                     foreach (IEventData data in args.iEventDataArray)
                         //Avoid errors
-                        if (IsValidData(entityComponent, data, args.complexDebugInformation
-                        .AddTempCustomText("given data isn't valid on entity: " + entityName)))
+                        if (IsValidData(entityComponent, data))
                             //Invoke data
-                            data.EventReference.RaiseEvents(entityName, componentName, args.complexDebugInformation
-                            .AddTempCustomText("couldnt raise events on entity: " + entityName));
+                            data.EventReference.RaiseEvents(entityName, componentName,
+                            args.debugMessage + "couldnt raise events on entity: " + entityName);
                 }
         }
     }

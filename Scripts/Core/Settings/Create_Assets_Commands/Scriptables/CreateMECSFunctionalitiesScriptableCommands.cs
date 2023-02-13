@@ -15,11 +15,6 @@ namespace MECS.Core
     public class CreateMECSFunctionalitiesScriptableCommands : ACreateMECSScriptableObjectCommand,
     ICommandReturn<Dictionary<string, ScriptableObject>>
     {
-        //ACreateMECSScriptableObjectCommand, base builder
-        public CreateMECSFunctionalitiesScriptableCommands(DebugTools.ComplexDebugInformation complexDebugInformation) :
-        base(complexDebugInformation)
-        { }
-
         //ICommandReturn, notify end of command
         public event EventHandler<Dictionary<string, ScriptableObject>> CommandFinishedEvent = null;
 
@@ -41,9 +36,7 @@ namespace MECS.Core
             //Create destroy entity asset
             bool couldntCreateAssets = CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.DESTROY_ENTITY_COMMAND_NAME,
             new CreatePersistentScriptableObjectCommand<ScriptableDestroyEntityCommand>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.DESTROY_ENTITY_COMMAND_NAME),
-            path, assetsNaming.DESTROY_ENTITY_COMMAND_NAME).Execute(),
-            complexDebugInformation);
+            (path, assetsNaming.DESTROY_ENTITY_COMMAND_NAME).Execute());
 
             //Set on final dictionary values
             if (couldntCreateAssets)

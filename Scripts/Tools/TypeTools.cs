@@ -1,4 +1,6 @@
-using static MECS.Tools.DebugTools;
+using System.Diagnostics;
+using MECS.Patrons.Commands;
+using UnityEngine;
 
 namespace MECS.Tools
 {
@@ -11,45 +13,31 @@ namespace MECS.Tools
 
         //Method, check if can convert to type object
         //T = target type
-        public static bool IsType<T>(object value, ComplexDebugInformation complexDebugInformation)
+        public static bool IsType<T>(object value, string debugMessage)
         {
             //Return value
-            bool isCorrect = ReferenceTools.IsValueSafe(value, complexDebugInformation.AddTempCustomText("given value isn't safe"));
+            bool isCorrect = ReferenceTools.IsValueSafe(value, debugMessage + "given value to check type isn't safe");
 
             //Check type
             if (isCorrect)
             {
                 isCorrect = value is T;
 
-                //Debug value
+                //Notify debug managers
                 if (!isCorrect)
-                    DebugTools.DebugError(complexDebugInformation.AddTempCustomText("given values isn't target type, value type is "
-                    + value.GetType().Name + " and target type is " + typeof(T).Name));
+                    new NotificationCommand<DebugArgs>(null, new DebugArgs(debugMessage
+                    + " given values isn't target type, value type is "
+                    + value.GetType().Name + " and target type is " + typeof(T).Name, LogType.Error, new StackTrace(true))).Execute();
             }
 
             return isCorrect;
         }
 
         //Method, convert value to target type and out it
-        public static bool ConvertToType<T>(object value, out T convertedObject)
+        public static bool ConvertToType<T>(object value, out T convertedObject, string debugMessage)
         {
-            //Out value
-            convertedObject = default;
-
-            //Return if object is given type
-            return IsType<T>(value);
-        }
-
-        //Method, convert value to target type and out it
-        public static bool ConvertToType<T>(object value, out T convertedObject, ComplexDebugInformation complexDebugInformation)
-        {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new("TypeTools",
-            "ConvertToType<T>(object value, out T convertedObject, ComplexDebugInformation complexDebugInformation)");
-
             //Check parameters
-            bool areParametersValid = ReferenceTools.AreValuesSafe(new object[] { value, complexDebugInformation },
-            new ComplexDebugInformation(basicDebugInformation, "given parameters aren't valid"));
+            bool areParametersValid = ReferenceTools.IsValueSafe(value, debugMessage + " given value to convert isn't valid");
 
             //Check type
             bool isCorrectType = false;
@@ -58,7 +46,7 @@ namespace MECS.Tools
             //Make executions
             if (areParametersValid)
             {
-                isCorrectType = IsType<T>(value, complexDebugInformation.AddTempCustomText("given value isn't target type"));
+                isCorrectType = IsType<T>(value, debugMessage + " given value to convert isn't target type");
 
                 convertedObject = isCorrectType ? (T)value : default;
             }

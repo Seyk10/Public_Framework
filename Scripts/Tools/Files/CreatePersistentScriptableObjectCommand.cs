@@ -4,7 +4,6 @@ using System.IO;
 using MECS.Patrons.Commands;
 using UnityEditor;
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Tools
 {
@@ -13,14 +12,12 @@ namespace MECS.Tools
     public class CreatePersistentScriptableObjectCommand<T> : ICommandReturn<T> where T : ScriptableObject
     {
         //Variables
-        private ComplexDebugInformation complexDebugInformation = null;
         private readonly string path = null,
         assetName = null;
 
         //Default builder
-        public CreatePersistentScriptableObjectCommand(ComplexDebugInformation complexDebugInformation, string path, string assetName)
+        public CreatePersistentScriptableObjectCommand(string path, string assetName)
         {
-            this.complexDebugInformation = complexDebugInformation;
             this.path = path;
             this.assetName = assetName;
         }
@@ -46,15 +43,9 @@ namespace MECS.Tools
                 //Safe assets and refresh data base
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
-
-                CommandFinishedEvent?.Invoke(this, asset);
             }
-            else
-            {
-                DebugTools.DebugError(complexDebugInformation.AddTempCustomText("couldnt create scriptable object, it already exists " + finalPath));
 
-                CommandFinishedEvent?.Invoke(this, null);
-            }
+            CommandFinishedEvent?.Invoke(this, asset);
 
             return asset;
         }

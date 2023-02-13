@@ -3,7 +3,6 @@ using MECS.Core;
 using MECS.Entities.Enums;
 using MECS.Events;
 using MECS.Filters;
-using MECS.Tools;
 using MECS.Variables.References;
 using UnityEngine;
 
@@ -14,14 +13,19 @@ namespace MECS.Colliders
     public class ColliderData : AData, IColliderData, IFilterData, IEventData
     {
         //Editor variables
+        #region COLLIDER_VALUES
         [Header("IColliderData values")]
         [SerializeField] private ColliderArrayReference colliderArrayReference = null;
         public ColliderArrayReference CollidersReference => colliderArrayReference;
         [SerializeField] private EColliderMode eColliderMode = EColliderMode.Collision;
         public EColliderMode EColliderMode => eColliderMode;
-        [SerializeField] EColliderCallback[] eColliderCallbacks = null;
+        [SerializeField] private EColliderCallback[] eColliderCallbacks = null;
         public EColliderCallback[] EColliderCallbacks => eColliderCallbacks;
+        [SerializeField] private GameObject lastCollisionEntity = null;
+        public GameObject LastCollisionEntity { get => lastCollisionEntity; set => lastCollisionEntity = value; }
+        #endregion
 
+        #region FILTER_VALUES
         [Header("IFilterData values")]
         [SerializeField] private ScriptableEnum[] scriptableEnums = null;
         public ScriptableEnum[] ScriptableEnums => scriptableEnums;
@@ -34,18 +38,22 @@ namespace MECS.Colliders
         [SerializeField] private FilterCheckPassTrackingInfo[] filterCheckingPassesTrackingInformation = null;
         public FilterCheckPassTrackingInfo[] FilterCheckingPassesTrackingInformation
         { get => filterCheckingPassesTrackingInformation; set => filterCheckingPassesTrackingInformation = value; }
+        #endregion
 
+        #region EVENT_VALUES
         [Header("IEventData values")]
         [SerializeField] private EventReference eventReference = null;
         public EventReference EventReference => eventReference;
+        #endregion
 
+        #region ADATA_LIFE_CYCLE_NOTIFICATION_METHODS
         //AData method, notify data awake
-        public override void NotifyDataAwake(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataAwake(MonoBehaviour sender)
         {
             //Args to send
-            EntityAwakeArgs<IColliderData> colliderArgs = new((IColliderData)this, complexDebugInformation);
-            EntityAwakeArgs<IFilterData> filterArgs = new((IFilterData)this, complexDebugInformation);
-            EntityAwakeArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityAwakeArgs<IColliderData> colliderArgs = new((IColliderData)this, " couldnt notify collider data awake");
+            EntityAwakeArgs<IFilterData> filterArgs = new((IFilterData)this, " couldnt notify filter data awake");
+            EntityAwakeArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify event data awake");
 
             //Notify IColliderData 
             NotifyDataPhase<EntityAwakeArgs<IColliderData>, IColliderData>(sender, colliderArgs);
@@ -56,12 +64,12 @@ namespace MECS.Colliders
         }
 
         //AData method, notify data enable
-        public override void NotifyDataEnable(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataEnable(MonoBehaviour sender)
         {
             //Args to send
-            EntityEnableArgs<IColliderData> colliderArgs = new((IColliderData)this, complexDebugInformation);
-            EntityEnableArgs<IFilterData> filterArgs = new((IFilterData)this, complexDebugInformation);
-            EntityEnableArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityEnableArgs<IColliderData> colliderArgs = new((IColliderData)this, " couldnt notify collider data enable");
+            EntityEnableArgs<IFilterData> filterArgs = new((IFilterData)this, " couldnt notify filter data enable");
+            EntityEnableArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify event data enable");
 
             //Notify IColliderData 
             NotifyDataPhase<EntityEnableArgs<IColliderData>, IColliderData>(sender, colliderArgs);
@@ -72,12 +80,12 @@ namespace MECS.Colliders
         }
 
         //AData method, notify data disable
-        public override void NotifyDataDisable(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataDisable(MonoBehaviour sender)
         {
             //Args to send
-            EntityDisableArgs<IColliderData> colliderArgs = new((IColliderData)this, complexDebugInformation);
-            EntityDisableArgs<IFilterData> filterArgs = new((IFilterData)this, complexDebugInformation);
-            EntityDisableArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityDisableArgs<IColliderData> colliderArgs = new((IColliderData)this, " couldnt notify collider data disable");
+            EntityDisableArgs<IFilterData> filterArgs = new((IFilterData)this, " couldnt notify filter data disable");
+            EntityDisableArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify event data disable");
 
             //Notify IColliderData 
             NotifyDataPhase<EntityDisableArgs<IColliderData>, IColliderData>(sender, colliderArgs);
@@ -88,12 +96,12 @@ namespace MECS.Colliders
         }
 
         //AData method, notify data destroy
-        public override void NotifyDataDestroy(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataDestroy(MonoBehaviour sender)
         {
             //Args to send
-            EntityDestroyArgs<IColliderData> colliderArgs = new((IColliderData)this, complexDebugInformation);
-            EntityDestroyArgs<IFilterData> filterArgs = new((IFilterData)this, complexDebugInformation);
-            EntityDestroyArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityDestroyArgs<IColliderData> colliderArgs = new((IColliderData)this, " couldnt notify collider data destroy");
+            EntityDestroyArgs<IFilterData> filterArgs = new((IFilterData)this, " couldnt notify filter data destroy");
+            EntityDestroyArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify event data destroy");
 
             //Notify IColliderData 
             NotifyDataPhase<EntityDestroyArgs<IColliderData>, IColliderData>(sender, colliderArgs);
@@ -102,5 +110,6 @@ namespace MECS.Colliders
             //Notify IEventData
             NotifyDataPhase<EntityDestroyArgs<IEventData>, IEventData>(sender, eventArgs);
         }
+        #endregion
     }
 }

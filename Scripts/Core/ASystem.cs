@@ -39,21 +39,20 @@ namespace MECS.Core
             "DataRegistrationResponse(object sender, ResponsiveDictionaryArgs<T, MonoBehaviour> args)");
 
             //Check if values are safe
-            bool areValuesSafe = ReferenceTools.IsValueSafe(sender, new ComplexDebugInformation(basicDebugInformation, "sender isn't safe"))
-                && ReferenceTools.IsValueSafe(args, new ComplexDebugInformation(basicDebugInformation, "args aren't safe"))
+            bool areValuesSafe = ReferenceTools.IsValueSafe(sender, args.debugMessage + " sender isn't safe")
+                && ReferenceTools.IsValueSafe(args, args.debugMessage + " args aren't safe")
                 && args.AreValuesValid();
 
             //Try to convert sender
             if (areValuesSafe)
                 //Convert value
                 if (TypeTools.ConvertToType<Component>(args.value, out Component entityComponent,
-                new ComplexDebugInformation(basicDebugInformation, "tried to register a non component value")))
+                args.debugMessage + " tried to register a non component value"))
                     //Check data values
-                    //Use args debug information on next executions
-                    IsValidData(entityComponent, args.key, args.complexDebugInformation);
+                    IsValidData(entityComponent, args.key);
         }
 
         //Check if registered data has valid values
-        protected abstract bool IsValidData(Component entity, T data, ComplexDebugInformation complexDebugInformation);
+        protected abstract bool IsValidData(Component entity, T data);
     }
 }

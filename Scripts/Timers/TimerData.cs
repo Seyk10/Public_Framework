@@ -11,6 +11,7 @@ namespace MECS.Timers
     [Serializable]
     public class TimerData : AData, ITimerData, IEventData
     {
+        #region TIMER_VALUES
         //Editor variables
         [Header("ITimerData values")]
         [SerializeField] private FloatReference time = null;
@@ -22,17 +23,21 @@ namespace MECS.Timers
         private TimerStateMachine stateMachine = new();
         public TimerStateMachine StateMachine => stateMachine;
         public bool IsTimerInitialized { get; set; }
+        #endregion
 
+        #region EVENT_VALUES
         [Header("IEventData values")]
         [SerializeField] private EventReference eventReference = null;
         public EventReference EventReference => eventReference;
+        #endregion
 
+        #region ADATA_LIFE_CYCLE_NOTIFICATION_METHODS
         //AData method, notify data awake
-        public override void NotifyDataAwake(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataAwake(MonoBehaviour sender)
         {
             //Args to send
-            EntityAwakeArgs<ITimerData> timerArgs = new((ITimerData)this, complexDebugInformation);
-            EntityAwakeArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityAwakeArgs<ITimerData> timerArgs = new((ITimerData)this, " couldnt notify ITimerData awake");
+            EntityAwakeArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify IEventData awake");
 
             //Notify ITimerData 
             NotifyDataPhase<EntityAwakeArgs<ITimerData>, ITimerData>(sender, timerArgs);
@@ -41,11 +46,11 @@ namespace MECS.Timers
         }
 
         //AData method, notify data enable
-        public override void NotifyDataEnable(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataEnable(MonoBehaviour sender)
         {
             //Args to send
-            EntityEnableArgs<ITimerData> timerArgs = new((ITimerData)this, complexDebugInformation);
-            EntityEnableArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityEnableArgs<ITimerData> timerArgs = new((ITimerData)this, " couldnt notify ITimerData enable");
+            EntityEnableArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify IEventData enable");
 
             //Notify ITimerData 
             NotifyDataPhase<EntityEnableArgs<ITimerData>, ITimerData>(sender, timerArgs);
@@ -54,11 +59,11 @@ namespace MECS.Timers
         }
 
         //AData method, notify data disable
-        public override void NotifyDataDisable(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataDisable(MonoBehaviour sender)
         {
             //Args to send
-            EntityDisableArgs<ITimerData> timerArgs = new((ITimerData)this, complexDebugInformation);
-            EntityDisableArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityDisableArgs<ITimerData> timerArgs = new((ITimerData)this, " couldnt notify ITimerData disable");
+            EntityDisableArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify IEventData disable");
 
             //Notify ITimerData 
             NotifyDataPhase<EntityDisableArgs<ITimerData>, ITimerData>(sender, timerArgs);
@@ -67,16 +72,17 @@ namespace MECS.Timers
         }
 
         //AData method, notify data destroy
-        public override void NotifyDataDestroy(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataDestroy(MonoBehaviour sender)
         {
             //Args to send
-            EntityDestroyArgs<ITimerData> timerArgs = new((ITimerData)this, complexDebugInformation);
-            EntityDestroyArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityDestroyArgs<ITimerData> timerArgs = new((ITimerData)this, " couldnt notify ITimerData destroy");
+            EntityDestroyArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify IEventData destroy");
 
             //Notify ITimerData 
             NotifyDataPhase<EntityDestroyArgs<ITimerData>, ITimerData>(sender, timerArgs);
             //Notify IEventData
             NotifyDataPhase<EntityDestroyArgs<IEventData>, IEventData>(sender, eventArgs);
         }
+        #endregion
     }
 }

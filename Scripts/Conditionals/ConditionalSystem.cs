@@ -1,10 +1,10 @@
+using System.Diagnostics;
 using MECS.Collections;
 using MECS.Core;
 using MECS.Events;
 using MECS.Patrons.Commands;
 using MECS.Tools;
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Conditionals
 {
@@ -13,7 +13,8 @@ namespace MECS.Conditionals
     [CreateAssetMenu(fileName = "New_Conditional_System", menuName = "MECS/Systems/Conditional")]
     public class ConditionalSystem : ASystem<IConditionalData>
     {
-        //Set subscriptions on manager list calls
+        #region LIFE_CYCLE_ASYSTEM_METHODS
+        //ASystem method, set subscriptions on manager list calls
         protected override void OnEnable()
         {
             //ASystem base execution
@@ -28,7 +29,7 @@ namespace MECS.Conditionals
             ScriptableSetStringConditionalCommand.ExecuteCommandEvent += ScriptableSetConditionalResponse;
         }
 
-        //Remove subscriptions on manager list calls
+        //ASystem method, remove subscriptions on manager list calls
         protected override void OnDisable()
         {
             //ASystem base execution
@@ -42,37 +43,22 @@ namespace MECS.Conditionals
             ScriptableSetBooleanConditionalCommand.ExecuteCommandEvent -= ScriptableSetConditionalResponse;
             ScriptableSetStringConditionalCommand.ExecuteCommandEvent -= ScriptableSetConditionalResponse;
         }
+        #endregion
 
+        #region CONDITIONAL_RESPONSES_METHODS
         //Method, execute add numeric command on given component
         private void ScriptableSetConditionalResponse(object sender, ScriptableConditionalArgs<float> args)
         {
-            //Basic debug information
-            BasicDebugInformation basicDebugInformation =
-            new(this.GetType().Name, "ScriptableSetConditionalResponse(object sender, ScriptableConditionalArgs<float> args)");
-
-            //Check parameters values before executing
-            //Check sender
-            bool areParametersValid = ReferenceTools.IsValueSafe(sender,
-            new ComplexDebugInformation(basicDebugInformation, "sender isn't valid"))
-
-            //Check args
-            && ReferenceTools.IsValueSafe(args,
-            new ComplexDebugInformation(basicDebugInformation, "sender isn't valid"))
-
-            //Check args values
-            && args.AreValuesValid();
-
             //Check if parameters are valid
-            if (areParametersValid)
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given parameters aren't valid"))
             {
                 //Local method, check conditionals conditions
                 void CheckEachDataConditionalConditions(Component entityComponent)
                 {
                     //Itinerate data values to execute command
-                    foreach (IConditionalData data in args.Component.DataReference.GetValue())
+                    foreach (IConditionalData data in args.Component.Data)
                         //Avoid errors
-                        if (IsValidData(entityComponent, data, new ComplexDebugInformation(basicDebugInformation,
-                        "given data isn't valid")))
+                        if (IsValidData(entityComponent, data))
                         {
                             new AddNumericConditionalCommand(args.Value, data.NumericConditionals).Execute();
                             //Check conditions
@@ -82,7 +68,7 @@ namespace MECS.Conditionals
 
                 //Try to convert sender to component
                 if (TypeTools.ConvertToType<Component>(sender, out Component entityComponent,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt convert sender to component")))
+                args.debugMessage + " couldnt convert sender to component"))
                     CheckEachDataConditionalConditions(entityComponent);
                 //Use args component as entity
                 else
@@ -93,33 +79,16 @@ namespace MECS.Conditionals
         //Method, execute set boolean command on given component
         private void ScriptableSetConditionalResponse(object sender, ScriptableConditionalArgs<bool> args)
         {
-            //Basic debug information
-            BasicDebugInformation basicDebugInformation =
-            new(this.GetType().Name, "ScriptableSetConditionalResponse(object sender, ScriptableConditionalArgs<bool> args)");
-
-            //Check parameters values before executing
-            //Check sender
-            bool areParametersValid = ReferenceTools.IsValueSafe(sender,
-            new ComplexDebugInformation(basicDebugInformation, "sender isn't valid"))
-
-            //Check args
-            && ReferenceTools.IsValueSafe(args,
-            new ComplexDebugInformation(basicDebugInformation, "sender isn't valid"))
-
-            //Check args values
-            && args.AreValuesValid();
-
             //Check if parameters are valid
-            if (areParametersValid)
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given parameters aren't valid"))
             {
                 //Local method, check conditionals conditions
                 void CheckEachDataConditionalConditions(Component entityComponent)
                 {
                     //Itinerate data values to execute command
-                    foreach (IConditionalData data in args.Component.DataReference.GetValue())
+                    foreach (IConditionalData data in args.Component.Data)
                         //Avoid errors
-                        if (IsValidData(entityComponent, data, new ComplexDebugInformation(basicDebugInformation,
-                        "given data isn't valid")))
+                        if (IsValidData(entityComponent, data))
                         {
                             new SetBooleanConditionalCommand(args.Value, data.BoolConditionals).Execute();
                             //Check conditions
@@ -129,7 +98,7 @@ namespace MECS.Conditionals
 
                 //Try to convert sender to component
                 if (TypeTools.ConvertToType<Component>(sender, out Component entityComponent,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt convert sender to component")))
+                args.debugMessage + "couldnt convert sender to component"))
                     CheckEachDataConditionalConditions(entityComponent);
                 //Use args component as entity
                 else
@@ -140,33 +109,16 @@ namespace MECS.Conditionals
         //Method, execute set string command on given component
         private void ScriptableSetConditionalResponse(object sender, ScriptableConditionalArgs<string> args)
         {
-            //Basic debug information
-            BasicDebugInformation basicDebugInformation =
-            new(this.GetType().Name, "ScriptableSetConditionalResponse(object sender, ScriptableConditionalArgs<string> args)");
-
-            //Check parameters values before executing
-            //Check sender
-            bool areParametersValid = ReferenceTools.IsValueSafe(sender,
-            new ComplexDebugInformation(basicDebugInformation, "sender isn't valid"))
-
-            //Check args
-            && ReferenceTools.IsValueSafe(args,
-            new ComplexDebugInformation(basicDebugInformation, "sender isn't valid"))
-
-            //Check args values
-            && args.AreValuesValid();
-
             //Check if parameters are valid
-            if (areParametersValid)
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given parameters aren't valid"))
             {
                 //Local method, check conditionals conditions
                 void CheckEachDataConditionalConditions(Component entityComponent)
                 {
                     //Itinerate data values to execute command
-                    foreach (IConditionalData data in args.Component.DataReference.GetValue())
+                    foreach (IConditionalData data in args.Component.Data)
                         //Avoid errors
-                        if (IsValidData(entityComponent, data, new ComplexDebugInformation(basicDebugInformation,
-                        "given data isn't valid")))
+                        if (IsValidData(entityComponent, data))
                         {
                             new SetStringConditionalCommand(args.Value, data.StringConditionals).Execute();
                             //Check conditions
@@ -176,13 +128,14 @@ namespace MECS.Conditionals
 
                 //Try to convert sender to component
                 if (TypeTools.ConvertToType<Component>(sender, out Component entityComponent,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt convert sender to component")))
+                args.debugMessage + "couldnt convert sender to component"))
                     CheckEachDataConditionalConditions(entityComponent);
                 //Use args component as entity
                 else
                     CheckEachDataConditionalConditions(args.Component);
             }
         }
+        #endregion
 
         //Method, check conditionals on data array and raise events if its necessary
         private void CheckConditionalsConditions(object sender, IConditionalData data)
@@ -195,8 +148,7 @@ namespace MECS.Conditionals
 
                 //Check conditionals
                 if (CollectionsTools.arrayTools.IsArrayContentSafe(data.NumericConditionals,
-                new ComplexDebugInformation(this.GetType().Name, "CheckConditionalsConditions(object sender, IConditionalData data)",
-                "given array data.NumericConditionals inst safe ")))
+                " given array data.NumericConditionals inst safe "))
                     foreach (NumericConditional numericConditional in data.NumericConditionals)
                         if (!numericConditional.IsOperationCorrect())
                         {
@@ -215,8 +167,7 @@ namespace MECS.Conditionals
 
                 //Check conditionals
                 if (CollectionsTools.arrayTools.IsArrayContentSafe(data.BoolConditionals,
-                new ComplexDebugInformation(this.GetType().Name, "CheckConditionalsConditions(object sender, IConditionalData data)",
-                "given array data.BoolConditionals inst safe ")))
+                " given array data.BoolConditionals inst safe "))
                     foreach (BoolConditional boolConditional in data.BoolConditionals)
                         if (!boolConditional.IsOperationCorrect())
                         {
@@ -235,8 +186,7 @@ namespace MECS.Conditionals
 
                 //Check conditionals
                 if (CollectionsTools.arrayTools.IsArrayContentSafe(data.StringConditionals,
-                new ComplexDebugInformation(this.GetType().Name, "CheckConditionalsConditions(object sender, IConditionalData data)",
-                "given array data.StringConditionals inst safe ")))
+                " given array data.StringConditionals inst safe "))
                     foreach (StringConditional stringConditional in data.StringConditionals)
                         if (!stringConditional.IsOperationCorrect())
                         {
@@ -255,78 +205,83 @@ namespace MECS.Conditionals
             if (isAnyConditionalActive)
             {
                 //Check each conditional type
-                bool canNumericConditions = data.UseNumericConditionals.Value && CheckNumericConditionals() || !data.UseNumericConditionals.Value,
-                   canStringConditions = data.UseStringConditionals.Value && CheckStringConditionals() || !data.UseStringConditionals.Value,
-                   canBooleanConditions = data.UseBoolConditionals.Value && CheckBoolConditionals() || !data.UseBoolConditionals.Value,
-                   canRaise = canNumericConditions && canStringConditions && canBooleanConditions;
+                //Check numeric conditionals
+                bool canNumericConditions = data.UseNumericConditionals.Value && CheckNumericConditionals()
+                    || !data.UseNumericConditionals.Value,
 
-                //Raise responses if can
+                //Check string conditionals
+                canStringConditions = data.UseStringConditionals.Value && CheckStringConditionals()
+                    || !data.UseStringConditionals.Value,
+
+                //Check bool conditionals
+                canBooleanConditions = data.UseBoolConditionals.Value && CheckBoolConditionals()
+                    || !data.UseBoolConditionals.Value,
+
+                //Check if there is any conditional active and availble
+                canRaise = canNumericConditions && canStringConditions && canBooleanConditions;
+
+                //Raise responses if its possible
                 if (canRaise)
-                {
-                    //Convert
-                    IEventData[] eventData = { data as IEventData };
-
-                    //Check if can invoke
-                    if (ReferenceTools.IsValueSafe(eventData[0]))
-                    {
-                        //Debug information
-                        BasicDebugInformation basicDebugInformation = new("ConditionalSystem",
-                         "CheckConditionalsConditions(object sender, IConditionalData data)");
-
+                    //Convert data to event data type
+                    if (TypeTools.ConvertToType<IEventData>(data, out IEventData eventData,
+                    " couldnt convert conditional data as event data"))
                         //Event system notification
                         new NotificationCommand<NotifyEventsInvocationArgs>(sender,
-                            new NotifyEventsInvocationArgs(eventData,
-                            new ComplexDebugInformation(basicDebugInformation, "couldnt invoke events from given event data")),
-                            basicDebugInformation).Execute();
-                    }
-#if UNITY_EDITOR
-                    else Debug.LogError("Warning: Given data doesnt implement IEventData interface, cant invoke " + sender.ToString());
-#endif
-                }
+                                            new NotifyEventsInvocationArgs(new IEventData[] { eventData },
+                                            " couldnt invoke events from given event data")).Execute();
             }
-#if UNITY_EDITOR
-            else
-                Debug.LogError("Warning: Given data doesnt have any conditional check.");
-#endif
+            //Notify debug manager if there isn't any conditional checking, convert sender to component and get name
+            else if (TypeTools.ConvertToType<Component>(sender, out Component component,
+                    " couldnt convert sender to component"))
+                //Execute notification
+                new NotificationCommand<DebugArgs>(this, new DebugArgs(" given data on entity: "
+                + component.gameObject.name + " hasn't any conditional checking active", LogType.Error,
+                new System.Diagnostics.StackTrace(true))).Execute();
         }
 
         //ASystem method, used to check data values
-        protected override bool IsValidData(Component entity, IConditionalData data,
-        ComplexDebugInformation complexDebugInformation)
+        protected override bool IsValidData(Component entity, IConditionalData data)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation =
-            new(this.GetType().Name, "IsValidData(Component entity, IConditionalData data)");
-            string entityName = entity.gameObject.name;
+            //Return value
+            bool isValidData = false;
 
-            //Check if there is any conditional active
-            bool isValidData = data.UseBoolConditionals.Value
-            || data.UseNumericConditionals.Value
-            || data.UseStringConditionals.Value;
-
-            //Check arrays
-            if (isValidData)
+            //Avoid parameters errors
+            if (CollectionsTools.arrayTools.IsArrayContentSafe(new object[] { entity, data },
+            " given parameters aren't safe"))
             {
-                //Check if bool conditionals are safe
-                if (data.UseBoolConditionals.Value)
-                    isValidData = CollectionsTools.arrayTools.IsArrayContentSafe(data.BoolConditionals,
-                    complexDebugInformation.AddTempCustomText("given BoolConditionals array isn't safe on entity: " + entityName));
+                string entityName = entity.gameObject.name;
 
-                //Check if numeric conditionals are safe
-                if (isValidData && data.UseNumericConditionals.Value)
-                    isValidData = CollectionsTools.arrayTools.IsArrayContentSafe(data.NumericConditionals,
-                    complexDebugInformation.AddTempCustomText("given NumericConditionals array isn't safe on entity: " + entityName));
+                //Check if there is any conditional active
+                bool hasConditionalChecking = data.UseBoolConditionals.Value
+                || data.UseNumericConditionals.Value
+                || data.UseStringConditionals.Value;
 
-                //Check if string conditionals are safe
-                if (isValidData && data.UseStringConditionals.Value)
-                    isValidData = CollectionsTools.arrayTools.IsArrayContentSafe(data.StringConditionals,
-                    complexDebugInformation.AddTempCustomText("given StringConditionals array isn't safe on entity: " + entityName));
+                //Check arrays
+                if (hasConditionalChecking)
+                {
+                    //Check if bool conditionals are safe
+                    if (data.UseBoolConditionals.Value)
+                        hasConditionalChecking = CollectionsTools.arrayTools.IsArrayContentSafe(data.BoolConditionals,
+                        " given BoolConditionals array isn't safe on entity: " + entityName);
+
+                    //Check if numeric conditionals are safe
+                    if (hasConditionalChecking && data.UseNumericConditionals.Value)
+                        hasConditionalChecking = CollectionsTools.arrayTools.IsArrayContentSafe(data.NumericConditionals,
+                        " given NumericConditionals array isn't safe on entity: " + entityName);
+
+                    //Check if string conditionals are safe
+                    if (hasConditionalChecking && data.UseStringConditionals.Value)
+                        hasConditionalChecking = CollectionsTools.arrayTools.IsArrayContentSafe(data.StringConditionals,
+                        " given StringConditionals array isn't safe on entity: " + entityName);
+                }
+                //Notify debug editor
+                else
+                    new NotificationCommand<DebugArgs>(entity,
+                    new DebugArgs("IConditionalData must contain atleast one conditional type active on entity : " + entityName,
+                    LogType.Error, new StackTrace(true)))
+                    .Execute();
             }
-#if UNITY_EDITOR
-            else
-                DebugTools.DebugError(new ComplexDebugInformation(basicDebugInformation,
-                "IConditionalData must contain atleast one conditional type active on entity : " + entityName));
-#endif
+
             return isValidData;
         }
     }

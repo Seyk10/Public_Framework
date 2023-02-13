@@ -1,6 +1,5 @@
 using MECS.Patrons.Commands;
 using UnityEngine;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.GameEvents
 {
@@ -11,13 +10,9 @@ namespace MECS.GameEvents
         //AScriptableParameterCommand, execute command content
         public override void Execute(GameEventListenerComponent parameter)
         {
-            //Debug information
-            BasicDebugInformation debugInformation = new("ScriptableUnregisterCommand",
-             "Execute(GameEventListenerComponent parameter) with " + parameter.name);
-
             //Notify game event listener system
             new NotificationCommand<NotificationUnregisterListenerArgs>(parameter,
-                new NotificationUnregisterListenerArgs(parameter), debugInformation).Execute();
+                new NotificationUnregisterListenerArgs(parameter, " couldnt register GameEventListenerComponent")).Execute();
 
             base.Execute(parameter);
         }

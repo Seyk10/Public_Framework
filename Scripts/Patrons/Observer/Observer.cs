@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using MECS.Collections;
-using MECS.Tools;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Patrons.Observers
 {
@@ -22,8 +20,7 @@ namespace MECS.Patrons.Observers
         public void AddSubject(ISubject subject)
         {
             //Notify if listener is added
-            if (CollectionsTools.listTools.AddValue(listeners, subject,
-            new ComplexDebugInformation(this.GetType().Name, "AddSubject(ISubject subject)", "couldnt add subject to")))
+            if (CollectionsTools.listTools.AddValue(listeners, subject, " couldnt add subject to"))
                 ListenerAdditionEvent?.Invoke(this, subject.SubjectName);
         }
 
@@ -37,7 +34,7 @@ namespace MECS.Patrons.Observers
             if (listeners.Count > 0)
                 //Itinerate listeners and raise responds
                 if (CollectionsTools.listTools.GetAuxiliaryList(listeners, out List<ISubject> auxiliaryList,
-                new ComplexDebugInformation(this.GetType().Name, "RaiseSubjects()", "couldnt copy listeners list")))
+                " couldnt copy listeners list"))
                     foreach (ISubject subject in auxiliaryList)
                         subject.Respond();
         }
@@ -48,9 +45,7 @@ namespace MECS.Patrons.Observers
             //Avoid if there aren't listeners
             if (listeners.Count > 0)
                 //Notify if listener is removed
-                if (CollectionsTools.listTools.RemoveValue(listeners, subject,
-                new ComplexDebugInformation(this.GetType().Name,
-                "RemoveSubject(ISubject subject)", "couldnt remove subject from listeners")))
+                if (CollectionsTools.listTools.RemoveValue(listeners, subject, " couldnt remove subject from listeners"))
                     ListenerRemoveEvent?.Invoke(this, subject.SubjectName);
         }
     }

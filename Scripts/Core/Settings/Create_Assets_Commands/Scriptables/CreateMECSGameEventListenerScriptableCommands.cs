@@ -15,11 +15,6 @@ namespace MECS.Core
     public class CreateMECSGameEventListenerScriptableCommands : ACreateMECSScriptableObjectCommand,
     ICommandReturn<Dictionary<string, ScriptableObject>>
     {
-        //CreateMECSGameEventListenerScriptableCommands, base builder
-        public CreateMECSGameEventListenerScriptableCommands(DebugTools.ComplexDebugInformation complexDebugInformation) :
-        base(complexDebugInformation)
-        { }
-
         //ICommandReturn, notify end of command
         public event EventHandler<Dictionary<string, ScriptableObject>> CommandFinishedEvent = null;
 
@@ -39,19 +34,15 @@ namespace MECS.Core
 
             //Check if could create all assets
             //Create check game event registration asset
-            bool couldntCreateAssets = CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.GAME_EVENT_REGISTRATION_COMMAND_NAME,
+            bool couldntCreateAssets = CollectionsTools.dictionaryTools.AddValue(tempDictionary,
+            assetsNaming.GAME_EVENT_REGISTRATION_COMMAND_NAME,
             new CreatePersistentScriptableObjectCommand<ScriptableRegistrationCommand>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.GAME_EVENT_REGISTRATION_COMMAND_NAME),
-            path, assetsNaming.GAME_EVENT_REGISTRATION_COMMAND_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.GAME_EVENT_REGISTRATION_COMMAND_NAME).Execute())
 
             //Create check game event unregister asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.GAME_EVENT_UNREGISTER_COMMAND_NAME,
             new CreatePersistentScriptableObjectCommand<ScriptableUnregisterCommand>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.GAME_EVENT_UNREGISTER_COMMAND_NAME),
-            path, assetsNaming.GAME_EVENT_UNREGISTER_COMMAND_NAME).Execute(),
-            complexDebugInformation);
+            (path, assetsNaming.GAME_EVENT_UNREGISTER_COMMAND_NAME).Execute());
 
             //Set on final dictionary values
             if (couldntCreateAssets)

@@ -7,6 +7,7 @@ using MECS.Events;
 using System.Collections.Generic;
 using static MECS.Tools.DebugTools;
 using MECS.Tools;
+using MECS.Collections;
 
 namespace MECS.GameEvents
 {
@@ -43,63 +44,37 @@ namespace MECS.GameEvents
         //Register subject on game event
         private void RegisterSubject(object sender, NotificationRegisterListenerArgs args)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation =
-            new(this.GetType().Name, "RegisterSubject(object sender, NotificationRegisterListenerArgs args)");
-
-            //Check if values are safe
-            bool areValuesSafe =
-            //Check sender
-            ReferenceTools.IsValueSafe(sender, new ComplexDebugInformation(basicDebugInformation, "sender isn't safe"))
-            //Check args
-            && ReferenceTools.IsValueSafe(args, new ComplexDebugInformation(basicDebugInformation, "args isn't safe"))
-            //Check args values
-            && args.AreValuesValid();
-
-            //Avoid if values aren't safe
-            if (areValuesSafe)
+            //Check if parameters are valid
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given parameters aren't valid"))
+            {
                 //Check data
-                foreach (IGameEventListenerData data in args.component.DataReference.GetValue())
+                foreach (IGameEventListenerData data in args.component.Data)
                     //Try to convert type to component
                     if (TypeTools.ConvertToType<Component>(sender, out Component entityComponent,
-                        new ComplexDebugInformation(basicDebugInformation, "couldnt convert sender to component")))
+                    args.debugMessage + " couldnt convert sender to component"))
                         //Avoid errors
-                        if (IsValidData(entityComponent, data,
-                        new ComplexDebugInformation(basicDebugInformation, "NotificationRegisterListenerArgs values aren't safe")))
+                        if (IsValidData(entityComponent, data))
                         {
                             Subject subject =
                             new Subject(args.component, data, args.component.gameObject.name + args.component.gameObject.GetHashCode());
 
                             data.GameEvent.Observer.AddSubject(subject);
                         }
+            }
         }
 
         //Unregister subject on game event
         private void UnregisterSubject(object sender, NotificationUnregisterListenerArgs args)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation =
-            new(this.GetType().Name, "UnregisterSubject(object sender, NotificationUnregisterListenerArgs args)");
-
-            //Check if values are safe
-            bool areValuesSafe =
-            //Check sender
-            ReferenceTools.IsValueSafe(sender, new ComplexDebugInformation(basicDebugInformation, "sender isn't safe"))
-            //Check args
-            && ReferenceTools.IsValueSafe(args, new ComplexDebugInformation(basicDebugInformation, "args isn't safe"))
-            //Check args values
-            && args.AreValuesValid();
-
             //Work data if values are safe
-            if (areValuesSafe)
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given parameters aren't valid"))
                 //Check data
-                foreach (IGameEventListenerData data in args.component.DataReference.GetValue())
+                foreach (IGameEventListenerData data in args.component.Data)
                     //Try convert sender to component
                     if (TypeTools.ConvertToType<Component>(sender, out Component entityComponent,
-                    new ComplexDebugInformation(basicDebugInformation, "couldnt convert sender to component")))
+                    args.debugMessage + " couldnt convert sender to component"))
                         //Avoid errors
-                        if (IsValidData(entityComponent, data,
-                        new ComplexDebugInformation(basicDebugInformation, "given data isn't safe")))
+                        if (IsValidData(entityComponent, data))
                         {
                             //Get list to avoid errors
                             ISubject[] listenersArray = data.GameEvent.Observer.Listeners;
@@ -108,7 +83,7 @@ namespace MECS.GameEvents
                             foreach (ISubject iSubject in listenersArray)
                                 //Convert listener to subject
                                 if (TypeTools.ConvertToType<Subject>(iSubject, out Subject subject,
-                                new ComplexDebugInformation(basicDebugInformation, "couldnt convert listener to Subject")))
+                                args.debugMessage + " couldnt convert listener to Subject"))
                                     //Check if iSubject is subject and remove it
                                     if (subject.component == args.component)
                                         data.GameEvent.Observer.RemoveSubject(iSubject);
@@ -118,36 +93,21 @@ namespace MECS.GameEvents
         //Unregister subject on game event with data
         private void UnregisterSubject(object sender, IGameEventListenerData data)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-            "UnregisterSubject(object sender, IGameEventListenerData data)");
-
-            //Check if given values are safe
-            bool areValuesSafe =
-                //Check sender
-                ReferenceTools.IsValueSafe(sender,
-                new ComplexDebugInformation(basicDebugInformation, "given sender isn't safe"))
-
-                //Check data
-                && ReferenceTools.IsValueSafe(sender,
-                new ComplexDebugInformation(basicDebugInformation, "given data isn't safe"));
-
             //Avoid if values aren't safe
-            if (areValuesSafe)
+            if (CollectionsTools.arrayTools.IsArrayContentSafe(new object[] { sender, data }, " given parameters aren't safe"))
                 //Convert sender
                 if (TypeTools.ConvertToType<Component>(sender, out Component entityComponent,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt convert sender")))
+                " couldnt convert sender to component"))
                     //Avoid errors
-                    if (IsValidData(entityComponent, data,
-                    new ComplexDebugInformation(basicDebugInformation, "given data isn't valid")))
+                    if (IsValidData(entityComponent, data))
                     {
                         //Store list to avoid list modifications
                         ISubject[] listenersArray = data.GameEvent.Observer.Listeners;
 
-                        //Itinerate subjects
-                        foreach (ISubject iSubject in listenersArray)
-                            //Convert to subject listener
-                            if (TypeTools.ConvertToType<Subject>(sender, out Subject subject))
+                        //Convert to subject listener
+                        if (TypeTools.ConvertToType<Subject>(sender, out Subject subject, " couldnt convert sender to subject"))
+                            //Itinerate subjects
+                            foreach (ISubject iSubject in listenersArray)
                                 //Remove from observer if there is coincidence
                                 if (subject.data == data)
                                     data.GameEvent.Observer.RemoveSubject(iSubject);
@@ -155,17 +115,16 @@ namespace MECS.GameEvents
         }
 
         //ASystem method, check if data values are valid
-        protected override bool IsValidData(Component entity, IGameEventListenerData data,
-        ComplexDebugInformation complexDebugInformation) =>
+        protected override bool IsValidData(Component entity, IGameEventListenerData data) =>
             //Check entity value
-            ReferenceTools.IsValueSafe(entity, complexDebugInformation.AddTempCustomText("given component isn't safe"))
+            ReferenceTools.IsValueSafe(entity, " given component isn't safe")
 
             //Check data value
-            && ReferenceTools.IsValueSafe(data, complexDebugInformation.AddTempCustomText("given data isn't safe"))
+            && ReferenceTools.IsValueSafe(data, " given data isn't safe")
 
             //Check game event value
-            && ReferenceTools.IsValueSafe(data.GameEvent, complexDebugInformation
-            .AddTempCustomText("given IGameEventListenerData values aren't valid on entity " + entity.gameObject.name));
+            && ReferenceTools.IsValueSafe(data.GameEvent,
+            " given IGameEventListenerData values aren't valid on entity " + entity.gameObject.name);
 
         //IDisposable, remove all the subjects from observers
         public void Dispose()
@@ -195,16 +154,11 @@ namespace MECS.GameEvents
             //ISubject, invoke event system response
             public void Respond()
             {
-                //Convert data
-                IEventData[] eventData = { data as IEventData };
-
-                //Debug information
-                BasicDebugInformation basicDebugInformation = new("GameEventListenerSystem", "Respond()");
-
-                //Notify event system
-                new NotificationCommand<NotifyEventsInvocationArgs>(component,
-                    new NotifyEventsInvocationArgs(eventData,
-                    new ComplexDebugInformation(basicDebugInformation, "couldnt respond to game event")), basicDebugInformation).Execute();
+                //Convert data to IEventData
+                if (TypeTools.ConvertToType(data, out IEventData eventData, " couldnt convert data to IEventData"))
+                    //Notify event system
+                    new NotificationCommand<NotifyEventsInvocationArgs>(component,
+                        new NotifyEventsInvocationArgs(new IEventData[] { eventData }, " couldnt respond to game event")).Execute();
             }
         }
     }

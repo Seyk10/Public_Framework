@@ -34,8 +34,7 @@ namespace MECS.Input
                     buttonInputStates.ButtonPerformed.VariableValue.Value = false;
                     buttonInputStates.ButtonPerformed.GameEvent.RaiseEvent();
                     buttonInputStates.ButtonPerformed.EventReference
-                    .RaiseEvents("Input System", buttonInputStates.ButtonPerformed.VariableValue.name,
-                    new ComplexDebugInformation(basicDebugInformation, "couldnt raise events"));
+                    .RaiseEvents("Input System", buttonInputStates.ButtonPerformed.VariableValue.name, " couldnt raise events");
                     break;
 
                 case InputActionPhase.Canceled:
@@ -44,8 +43,7 @@ namespace MECS.Input
                     buttonInputStates.ButtonCanceled.VariableValue.Value = false;
                     buttonInputStates.ButtonCanceled.GameEvent.RaiseEvent();
                     buttonInputStates.ButtonCanceled.EventReference
-                    .RaiseEvents("Input System", buttonInputStates.ButtonCanceled.VariableValue.name,
-                    new ComplexDebugInformation(basicDebugInformation, "couldnt raise events"));
+                    .RaiseEvents("Input System", buttonInputStates.ButtonCanceled.VariableValue.name, " couldnt raise events");
                     break;
             }
 

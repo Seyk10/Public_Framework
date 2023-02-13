@@ -1,6 +1,5 @@
 using MECS.Core;
 using MECS.Patrons.Commands;
-using UnityEngine;
 using static MECS.Tools.DebugTools;
 
 namespace MECS.LifeCycle
@@ -21,9 +20,8 @@ namespace MECS.LifeCycle
 
             //Notify phase
             new NotificationCommand<LifeCycleNotificationArgs>(this,
-                new LifeCycleNotificationArgs(DataReference.GetValue(), ELifeCyclePhase.Awake,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt invoke awake responses")), basicDebugInformation)
-                .Execute();
+                new LifeCycleNotificationArgs(Data, ELifeCyclePhase.Awake,
+                " couldnt invoke awake responses")).Execute();
         }
 
         //MonoBehaviour, raise response on enable state
@@ -37,9 +35,8 @@ namespace MECS.LifeCycle
 
             //Notify phase
             new NotificationCommand<LifeCycleNotificationArgs>(this,
-                new LifeCycleNotificationArgs(DataReference.GetValue(), ELifeCyclePhase.Enable,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt invoke OnEnable responses")), basicDebugInformation)
-                .Execute();
+                new LifeCycleNotificationArgs(Data, ELifeCyclePhase.Enable,
+                " couldnt invoke OnEnable responses")).Execute();
         }
 
         //MonoBehaviour, raise response on start state    
@@ -50,9 +47,8 @@ namespace MECS.LifeCycle
 
             //Notify phase
             new NotificationCommand<LifeCycleNotificationArgs>(this,
-                new LifeCycleNotificationArgs(DataReference.GetValue(), ELifeCyclePhase.Start,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt invoke Start responses")), basicDebugInformation)
-                .Execute();
+                new LifeCycleNotificationArgs(Data, ELifeCyclePhase.Start,
+                " couldnt invoke Start responses")).Execute();
         }
 
         //MonoBehaviour, raise response on disable state
@@ -63,9 +59,8 @@ namespace MECS.LifeCycle
 
             //Notify phase            
             new NotificationCommand<LifeCycleNotificationArgs>(this,
-                new LifeCycleNotificationArgs(DataReference.GetValue(), ELifeCyclePhase.Disable,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt invoke OnDisable responses")), basicDebugInformation)
-                .Execute();
+                new LifeCycleNotificationArgs(Data, ELifeCyclePhase.Disable,
+                " couldnt invoke OnDisable responses")).Execute();
 
             //base AComponent execution
             base.OnDisable();
@@ -79,9 +74,8 @@ namespace MECS.LifeCycle
 
             //Notify phase
             new NotificationCommand<LifeCycleNotificationArgs>(this,
-                new LifeCycleNotificationArgs(DataReference.GetValue(), ELifeCyclePhase.Destroy,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt invoke OnDestroy responses")), basicDebugInformation)
-                .Execute();
+                new LifeCycleNotificationArgs(Data, ELifeCyclePhase.Destroy,
+                " couldnt invoke OnDestroy responses")).Execute();
 
             //base AComponent execution
             base.OnDestroy();

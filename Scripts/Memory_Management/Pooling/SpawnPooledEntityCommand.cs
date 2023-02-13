@@ -2,7 +2,7 @@ using System;
 using MECS.Patrons.Commands;
 using UnityEngine;
 
-namespace MECS.MemoryManagement.Entity.Pooling 
+namespace MECS.MemoryManagement.Entity.Pooling
 {
     //* Command used to notify the spawn of a entity from a given pool
     [CreateAssetMenu(fileName = "New_Spawn_Pooled_Entity_Command", menuName = "MECS/Commands/Memory_Management/Pooled/Spawn_Pooled_Entity")]
@@ -18,9 +18,10 @@ namespace MECS.MemoryManagement.Entity.Pooling
         public event EventHandler<Transform> CommandFinishedEvent = null;
 
         //Notify the spawn of an entity on given transform values
-        public void Execute(Transform parameter) 
+        public void Execute(Transform parameter)
         {
-            SpawnPooledEntityEvent?.Invoke(this, new SpawnPooledEntityArgs(parameter, addresableEntityPool));
+            SpawnPooledEntityEvent?.Invoke(this, new SpawnPooledEntityArgs(parameter, addresableEntityPool,
+            " couldnt spawn from pool"));
             CommandFinishedEvent?.Invoke(this, parameter);
         }
     }

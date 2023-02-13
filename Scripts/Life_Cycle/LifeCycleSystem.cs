@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using MECS.Collections;
 using MECS.Core;
 using MECS.Events;
 using MECS.Patrons.Commands;
@@ -35,79 +37,76 @@ namespace MECS.LifeCycle
         //Response awake life phase
         private void ResponseLifePhase(object sender, LifeCycleNotificationArgs args)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation
-            = new(this.GetType().Name, "ResponseLifePhase(object sender, LifeCycleNotificationArgs args)");
-
             //Check parameters values
-            if (ReferenceTools.AreEventParametersValid(sender, args,
-            new ComplexDebugInformation(basicDebugInformation, "given parameters aren't valid")))
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given parameters aren't valid"))
                 //Itinerate data
                 foreach (ILifeCycleData data in args.iLifeCycleDataArray)
                 {
                     //Avoid type errors
                     if (TypeTools.ConvertToType<Component>(sender, out Component entityComponent,
-                    new ComplexDebugInformation(basicDebugInformation, "given sender isn't a component")))
+                    args.debugMessage + " given sender isn't a component"))
                         //Check if its valid
-                        if (IsValidData(entityComponent, data,
-                        new ComplexDebugInformation(basicDebugInformation, "couldnt response to life phase")))
+                        if (IsValidData(entityComponent, data))
                         {
                             //Local method, invoke response
                             void InvokeResponse()
                             {
                                 //Convert data to event data
-                                if (TypeTools.ConvertToType(data, out IEventData eventData, args.complexDebugInformation
-                                .AddTempCustomText("couldnt convert data to event data")))
+                                if (TypeTools.ConvertToType(data, out IEventData eventData,
+                                args.debugMessage + " couldnt convert data to event data"))
                                     //Notify event system
                                     new NotificationCommand<NotifyEventsInvocationArgs>(sender,
                                         new NotifyEventsInvocationArgs(new IEventData[] { eventData },
-                                        args.complexDebugInformation.AddTempCustomText("life cycle data doesnt implement IEventData"))
-                                        , args.complexDebugInformation
-                                        .AddTempCustomText("couldnt invoke events on life data")).Execute();
+                                        args.debugMessage + " couldnt invoke events on life data")).Execute();
                             }
 
                             //Check phases
-                            if (data.HasAwakeResponse.Value && args.lifeCyclePhase == ELifeCyclePhase.Awake)
+                            if (data.HasAwakeResponse.Value && args.lifeCyclePhase.Equals(ELifeCyclePhase.Awake))
                                 InvokeResponse();
-                            else if (data.HasEnableResponse.Value && args.lifeCyclePhase == ELifeCyclePhase.Enable)
+                            else if (data.HasEnableResponse.Value && args.lifeCyclePhase.Equals(ELifeCyclePhase.Enable))
                                 InvokeResponse();
-                            else if (data.HasStartResponse.Value && args.lifeCyclePhase == ELifeCyclePhase.Start)
+                            else if (data.HasStartResponse.Value && args.lifeCyclePhase.Equals(ELifeCyclePhase.Start))
                                 InvokeResponse();
-                            else if (data.HasDisableResponse.Value && args.lifeCyclePhase == ELifeCyclePhase.Disable)
+                            else if (data.HasDisableResponse.Value && args.lifeCyclePhase.Equals(ELifeCyclePhase.Disable))
                                 InvokeResponse();
-                            else if (data.HasDestroyResponse.Value && args.lifeCyclePhase == ELifeCyclePhase.Destroy)
+                            else if (data.HasDestroyResponse.Value && args.lifeCyclePhase.Equals(ELifeCyclePhase.Destroy))
                                 InvokeResponse();
-                            else if (data.HasDestroyResponse.Value && args.lifeCyclePhase == ELifeCyclePhase.NULL)
-                                DebugTools.DebugError(new ComplexDebugInformation
-                                ("LifeCycleSystem", "ResponseLifePhase(object sender, LifeCycleNotificationArgs args)",
-                                "lifeCyclePhase shouldn't be NULL"));
+                            //Notify debug manager if its null
+                            else if (data.HasDestroyResponse.Value && args.lifeCyclePhase.Equals(ELifeCyclePhase.NULL))
+                                new NotificationCommand<DebugArgs>(sender,
+                                new DebugArgs(args.debugMessage + " lifeCyclePhase shouldn't be NULL", LogType.Error,
+                                new StackTrace(true))).Execute();
                         }
                 }
         }
 
         //ASystem, check if data values are valid
-        protected override bool IsValidData(Component entity, ILifeCycleData data, ComplexDebugInformation complexDebugInformation)
+        protected override bool IsValidData(Component entity, ILifeCycleData data)
         {
-            bool isValidData = true;
-            //Debug information
-            string entityName = entity.gameObject.name;
+            //Return value
+            bool isValidData = false;
 
-            //Check if there is any life response
-            bool hasResponses = data.HasAwakeResponse.Value == true
-            || data.HasDestroyResponse.Value == true
-            || data.HasDisableResponse.Value == true
-            || data.HasEnableResponse.Value == true
-            || data.HasStartResponse.Value == true;
-
-            //Check if has any response
-            if (!hasResponses)
+            //Check parameters
+            if (CollectionsTools.arrayTools.IsArrayContentSafe(new object[] { entity, data }, " given parameters aren't valid"))
             {
-                isValidData = false;
+                //Debug information
+                string entityName = entity.gameObject.name;
 
-#if UNITY_EDITOR
-                DebugTools.DebugError(complexDebugInformation
-                .AddTempCustomText("given ILifeCycleData must have any life response on: " + entityName));
-#endif
+                //Check if there is any life response
+                bool hasResponses = data.HasAwakeResponse.Value == true
+                || data.HasDestroyResponse.Value == true
+                || data.HasDisableResponse.Value == true
+                || data.HasEnableResponse.Value == true
+                || data.HasStartResponse.Value == true;
+
+                //Check if has any response
+                if (hasResponses)
+                    isValidData = true;
+                //Notify debug manager
+                else
+                    new NotificationCommand<DebugArgs>(entity,
+                    new DebugArgs("given ILifeCycleData must have any life response on: " + entity.gameObject.name,
+                    LogType.Error, new StackTrace(true))).Execute();
             }
 
             return isValidData;

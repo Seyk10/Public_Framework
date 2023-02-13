@@ -27,11 +27,15 @@ namespace MECS.Variables.References
             T3 resultValue = default;
 
             //Check value_01 type
-            if (valueType == EReference.Value_01)
-                resultValue = ReferenceTools.ConvertObjectToType<T3>(value_01);
+            if (valueType.Equals(EReference.Value_01))
+            {
+                if (TypeTools.ConvertToType<T3>(value_01, out T3 newValue_01, " couldnt convert value01 to target type"))
+                    resultValue = newValue_01;
+            }
             //Check value_02 type
-            else if (valueType == EReference.Value_02)
-                resultValue = ReferenceTools.ConvertObjectToType<T3>(value_02);
+            else if (valueType.Equals(EReference.Value_02))
+                if (TypeTools.ConvertToType<T3>(value_02, out T3 newValue_02, " couldnt convert value02 to target type"))
+                    resultValue = newValue_02;
 
             return resultValue;
         }
@@ -43,49 +47,39 @@ namespace MECS.Variables.References
             bool isTypeOnUse = false;
 
             //Check value_01 type
-            if (valueType == EReference.Value_01 && value is T t3Value_01)
+            if (valueType.Equals(EReference.Value_01))
             {
-                value_01 = t3Value_01;
-                Value_01ChangedEvent?.Invoke(this, value_01);
-                isTypeOnUse = true;
+                //Convert to target type
+                if (TypeTools.ConvertToType(value, out T t3Value_01, " couldnt convert value to target type"))
+                {
+                    value_01 = t3Value_01;
+                    Value_01ChangedEvent?.Invoke(this, value_01);
+                    isTypeOnUse = true;
+                }
             }
             //Check value_02 type
-            else if (valueType == EReference.Value_02 && value is T2 t3Value_02)
+            else if (valueType.Equals(EReference.Value_02))
             {
-                value_02 = t3Value_02;
-                Value_02ChangedEvent?.Invoke(this, value_02);
-                isTypeOnUse = true;
+                //Convert to target type
+                if (TypeTools.ConvertToType(value, out T2 t3Value_02, " couldnt convert value to target type"))
+                {
+                    value_02 = t3Value_02;
+                    Value_02ChangedEvent?.Invoke(this, value_02);
+                    isTypeOnUse = true;
+                }
             }
-#if UNITY_EDITOR
-            else Debug.LogWarning("Warning: Could not find given type.");
-#endif
 
             return isTypeOnUse;
         }
 
-        //IEditorReferences, check if editor values are valid
-        public bool CheckEditorReferences()
-        {
-            bool validValues = true;
+        //IEditorReferences method, check if editor values are valid
+        public bool CheckEditorReferences() =>
+            //Check value01
+            valueType.Equals(EReference.Value_01)
+            && ReferenceTools.IsValueSafe(value_01, " value01 isn't safe")
 
-            //Check value 01
-            if (valueType == EReference.Value_01 && value_01 == null)
-            {
-                validValues = false;
-#if UNITY_EDITOR
-                Debug.LogWarning("Warning: Value_01 is missing.");
-#endif
-            }
-            //Check value 02
-            else if (valueType == EReference.Value_02 && value_02 == null)
-            {
-                validValues = false;
-#if UNITY_EDITOR
-                Debug.LogWarning("Warning: Value_02 is missing.");
-#endif
-            }
-
-            return validValues;
-        }
+            //Check value02
+            || valueType.Equals(EReference.Value_02)
+            && ReferenceTools.IsValueSafe(value_02, " value02 isn't safe");
     }
 }

@@ -36,7 +36,7 @@ namespace MECS.Core
             //Get input asset values
             if (CollectionsTools.dictionaryTools.
             GetValue(MECSSettings.SystemsDictionary, MECSDefaultSettingsNaming.systemsNaming.systemAssetsNaming.INPUT_SYSTEM_NAME,
-            out ScriptableObject scriptableInputSystem, complexDebugInformation.AddTempCustomText("couldnt get input system")))
+            out ScriptableObject scriptableInputSystem, " couldnt get input system"))
             {
                 //Store input system
                 InputSystem inputSystem = (InputSystem)scriptableInputSystem;
@@ -54,9 +54,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, mouseInputAssetsScriptableObjectsNaming
                         .LEFT_CLICK_BUTTON_PERFORMED_VARIABLE_NAME,
-                        out ScriptableObject scriptableLeftClickButtonPerformedVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + mouseInputAssetsScriptableObjectsNaming
-                        .LEFT_CLICK_BUTTON_PERFORMED_VARIABLE_NAME)))
+                        out ScriptableObject scriptableLeftClickButtonPerformedVariable,
+                        " couldnt get " + mouseInputAssetsScriptableObjectsNaming.LEFT_CLICK_BUTTON_PERFORMED_VARIABLE_NAME))
                         //Set left click performed variable asset
                         inputSystem.PcMapReferences.MouseInput.LeftClickInput.ButtonPerformed.VariableValue =
                         (BoolVariable)scriptableLeftClickButtonPerformedVariable;
@@ -68,9 +67,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, mouseInputAssetsScriptableObjectsNaming
                         .LEFT_CLICK_BUTTON_CANCELED_VARIABLE_NAME,
-                        out ScriptableObject scriptableLeftClickButtonCanceledVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + mouseInputAssetsScriptableObjectsNaming
-                        .LEFT_CLICK_BUTTON_CANCELED_VARIABLE_NAME)))
+                        out ScriptableObject scriptableLeftClickButtonCanceledVariable,
+                        "couldnt get " + mouseInputAssetsScriptableObjectsNaming.LEFT_CLICK_BUTTON_CANCELED_VARIABLE_NAME))
                         //Set left click canceled variable asset
                         inputSystem.PcMapReferences.MouseInput.LeftClickInput.ButtonCanceled.VariableValue =
                         (BoolVariable)scriptableLeftClickButtonCanceledVariable;
@@ -82,9 +80,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, mouseInputAssetsScriptableObjectsNaming
                         .LEFT_CLICK_BUTTON_PERFORMED_GAME_EVENT_NAME,
-                        out ScriptableObject scriptableLeftClickButtonPerformedGameEvent, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + mouseInputAssetsScriptableObjectsNaming
-                        .LEFT_CLICK_BUTTON_PERFORMED_GAME_EVENT_NAME)))
+                        out ScriptableObject scriptableLeftClickButtonPerformedGameEvent,
+                        " couldnt get " + mouseInputAssetsScriptableObjectsNaming.LEFT_CLICK_BUTTON_PERFORMED_GAME_EVENT_NAME))
                         //Set left click performed game event asset
                         inputSystem.PcMapReferences.MouseInput.LeftClickInput.ButtonPerformed.GameEvent =
                         (GameEvent)scriptableLeftClickButtonPerformedGameEvent;
@@ -96,9 +93,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, mouseInputAssetsScriptableObjectsNaming
                         .LEFT_CLICK_BUTTON_CANCELED_GAME_EVENT_NAME,
-                        out ScriptableObject scriptableLeftClickButtonCanceledGameEvent, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + mouseInputAssetsScriptableObjectsNaming
-                        .LEFT_CLICK_BUTTON_CANCELED_GAME_EVENT_NAME)))
+                        out ScriptableObject scriptableLeftClickButtonCanceledGameEvent,
+                        " couldnt get " + mouseInputAssetsScriptableObjectsNaming.LEFT_CLICK_BUTTON_CANCELED_GAME_EVENT_NAME))
                         //Set left click canceled game event asset
                         inputSystem.PcMapReferences.MouseInput.LeftClickInput.ButtonCanceled.GameEvent =
                         (GameEvent)scriptableLeftClickButtonCanceledGameEvent;
@@ -111,9 +107,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, mouseInputAssetsScriptableObjectsNaming
                         .RIGHT_CLICK_BUTTON_PERFORMED_VARIABLE_NAME,
-                        out ScriptableObject scriptableRightClickButtonPerformedVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + mouseInputAssetsScriptableObjectsNaming
-                        .RIGHT_CLICK_BUTTON_PERFORMED_VARIABLE_NAME)))
+                        out ScriptableObject scriptableRightClickButtonPerformedVariable,
+                        " couldnt get " + mouseInputAssetsScriptableObjectsNaming.RIGHT_CLICK_BUTTON_PERFORMED_VARIABLE_NAME))
                         //Set right click performed variable asset
                         inputSystem.PcMapReferences.MouseInput.RightClickInput.ButtonPerformed.VariableValue =
                         (BoolVariable)scriptableRightClickButtonPerformedVariable;
@@ -125,9 +120,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, mouseInputAssetsScriptableObjectsNaming
                         .RIGHT_CLICK_BUTTON_CANCELED_VARIABLE_NAME,
-                        out ScriptableObject scriptableRightClickButtonCanceledVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + mouseInputAssetsScriptableObjectsNaming
-                        .RIGHT_CLICK_BUTTON_CANCELED_VARIABLE_NAME)))
+                        out ScriptableObject scriptableRightClickButtonCanceledVariable,
+                        " couldnt get " + mouseInputAssetsScriptableObjectsNaming.RIGHT_CLICK_BUTTON_CANCELED_VARIABLE_NAME))
                         //Set right click canceled variable asset
                         inputSystem.PcMapReferences.MouseInput.RightClickInput.ButtonCanceled.VariableValue =
                         (BoolVariable)scriptableRightClickButtonCanceledVariable;
@@ -139,9 +133,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, mouseInputAssetsScriptableObjectsNaming
                         .RIGHT_CLICK_BUTTON_PERFORMED_GAME_EVENT_NAME,
-                        out ScriptableObject scriptableRightClickButtonPerformedGameEvent, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + mouseInputAssetsScriptableObjectsNaming
-                        .RIGHT_CLICK_BUTTON_PERFORMED_GAME_EVENT_NAME)))
+                        out ScriptableObject scriptableRightClickButtonPerformedGameEvent,
+                        " couldnt get " + mouseInputAssetsScriptableObjectsNaming.RIGHT_CLICK_BUTTON_PERFORMED_GAME_EVENT_NAME))
                         //Set right click performed game event asset
                         inputSystem.PcMapReferences.MouseInput.RightClickInput.ButtonPerformed.GameEvent =
                         (GameEvent)scriptableRightClickButtonPerformedGameEvent;
@@ -153,9 +146,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, mouseInputAssetsScriptableObjectsNaming
                         .RIGHT_CLICK_BUTTON_CANCELED_GAME_EVENT_NAME,
-                        out ScriptableObject scriptableRightClickButtonCanceledGameEvent, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + mouseInputAssetsScriptableObjectsNaming
-                        .RIGHT_CLICK_BUTTON_CANCELED_GAME_EVENT_NAME)))
+                        out ScriptableObject scriptableRightClickButtonCanceledGameEvent,
+                        " couldnt get " + mouseInputAssetsScriptableObjectsNaming.RIGHT_CLICK_BUTTON_CANCELED_GAME_EVENT_NAME))
                         //Set right click canceled game event asset
                         inputSystem.PcMapReferences.MouseInput.RightClickInput.ButtonCanceled.GameEvent =
                         (GameEvent)scriptableRightClickButtonCanceledGameEvent;
@@ -168,9 +160,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, mouseInputAssetsScriptableObjectsNaming
                         .MOUSE_DELTA_POSITION_VARIABLE_NAME,
-                        out ScriptableObject scriptableMouseDeltaPositionVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + mouseInputAssetsScriptableObjectsNaming
-                        .MOUSE_DELTA_POSITION_VARIABLE_NAME)))
+                        out ScriptableObject scriptableMouseDeltaPositionVariable,
+                        " couldnt get " + mouseInputAssetsScriptableObjectsNaming.MOUSE_DELTA_POSITION_VARIABLE_NAME))
                         //Set mouse delta position variable asset
                         inputSystem.PcMapReferences.MouseInput.MouseDeltaPosition =
                         (Vector2Variable)scriptableMouseDeltaPositionVariable;
@@ -182,9 +173,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, mouseInputAssetsScriptableObjectsNaming
                         .MOUSE_SCREEN_POSITION_VARIABLE_NAME,
-                        out ScriptableObject scriptableMouseScreenPositionVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + mouseInputAssetsScriptableObjectsNaming
-                        .MOUSE_SCREEN_POSITION_VARIABLE_NAME)))
+                        out ScriptableObject scriptableMouseScreenPositionVariable,
+                        " couldnt get " + mouseInputAssetsScriptableObjectsNaming.MOUSE_SCREEN_POSITION_VARIABLE_NAME))
                         //Set mouse screen position variable asset
                         inputSystem.PcMapReferences.MouseInput.MouseScreenPosition =
                         (Vector2Variable)scriptableMouseScreenPositionVariable;
@@ -196,9 +186,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, mouseInputAssetsScriptableObjectsNaming
                         .MOUSE_WORLD_POSITION_VARIABLE_NAME,
-                        out ScriptableObject scriptableMouseWorldPositionVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + mouseInputAssetsScriptableObjectsNaming
-                        .MOUSE_WORLD_POSITION_VARIABLE_NAME)))
+                        out ScriptableObject scriptableMouseWorldPositionVariable,
+                        " couldnt get " + mouseInputAssetsScriptableObjectsNaming.MOUSE_WORLD_POSITION_VARIABLE_NAME))
                         //Set mouse world position variable asset
                         inputSystem.PcMapReferences.MouseInput.MouseWorldPosition =
                         (Vector3Variable)scriptableMouseWorldPositionVariable;
@@ -221,9 +210,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .A_BUTTON_PERFORMED_VARIABLE_NAME,
-                        out ScriptableObject scriptableAButtonPerformedVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .A_BUTTON_PERFORMED_VARIABLE_NAME)))
+                        out ScriptableObject scriptableAButtonPerformedVariable,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.A_BUTTON_PERFORMED_VARIABLE_NAME))
                         //Set A button performed variable asset
                         inputSystem.PcMapReferences.KeyboardInput.AButtonInput.ButtonPerformed.VariableValue =
                         (BoolVariable)scriptableAButtonPerformedVariable;
@@ -235,9 +223,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .A_BUTTON_CANCELED_VARIABLE_NAME,
-                        out ScriptableObject scriptableAButtonCanceledVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .A_BUTTON_CANCELED_VARIABLE_NAME)))
+                        out ScriptableObject scriptableAButtonCanceledVariable,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.A_BUTTON_CANCELED_VARIABLE_NAME))
                         //Set A button canceled variable asset
                         inputSystem.PcMapReferences.KeyboardInput.AButtonInput.ButtonCanceled.VariableValue =
                         (BoolVariable)scriptableAButtonCanceledVariable;
@@ -249,9 +236,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .A_BUTTON_PERFORMED_GAME_EVENT_NAME,
-                        out ScriptableObject scriptableAButtonPerformedGameEvent, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .A_BUTTON_PERFORMED_GAME_EVENT_NAME)))
+                        out ScriptableObject scriptableAButtonPerformedGameEvent,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.A_BUTTON_PERFORMED_GAME_EVENT_NAME))
                         //Set A button performed game event asset
                         inputSystem.PcMapReferences.KeyboardInput.AButtonInput.ButtonPerformed.GameEvent =
                         (GameEvent)scriptableAButtonPerformedGameEvent;
@@ -263,9 +249,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .A_BUTTON_CANCELED_GAME_EVENT_NAME,
-                        out ScriptableObject scriptableAButtonCanceledGameEvent, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .A_BUTTON_CANCELED_GAME_EVENT_NAME)))
+                        out ScriptableObject scriptableAButtonCanceledGameEvent,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.A_BUTTON_CANCELED_GAME_EVENT_NAME))
                         //Set A button canceled game event asset
                         inputSystem.PcMapReferences.KeyboardInput.AButtonInput.ButtonCanceled.GameEvent =
                         (GameEvent)scriptableAButtonCanceledGameEvent;
@@ -278,9 +263,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .S_BUTTON_PERFORMED_VARIABLE_NAME,
-                        out ScriptableObject scriptableSButtonPerformedVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .S_BUTTON_PERFORMED_VARIABLE_NAME)))
+                        out ScriptableObject scriptableSButtonPerformedVariable,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.S_BUTTON_PERFORMED_VARIABLE_NAME))
                         //Set S button performed variable asset
                         inputSystem.PcMapReferences.KeyboardInput.SButtonInput.ButtonPerformed.VariableValue =
                         (BoolVariable)scriptableSButtonPerformedVariable;
@@ -292,9 +276,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .S_BUTTON_CANCELED_VARIABLE_NAME,
-                        out ScriptableObject scriptableSButtonCanceledVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .S_BUTTON_CANCELED_VARIABLE_NAME)))
+                        out ScriptableObject scriptableSButtonCanceledVariable,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.S_BUTTON_CANCELED_VARIABLE_NAME))
                         //Set S button canceled variable asset
                         inputSystem.PcMapReferences.KeyboardInput.SButtonInput.ButtonCanceled.VariableValue =
                         (BoolVariable)scriptableSButtonCanceledVariable;
@@ -306,9 +289,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .S_BUTTON_PERFORMED_GAME_EVENT_NAME,
-                        out ScriptableObject scriptableSButtonPerformedGameEvent, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .S_BUTTON_PERFORMED_GAME_EVENT_NAME)))
+                        out ScriptableObject scriptableSButtonPerformedGameEvent,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.S_BUTTON_PERFORMED_GAME_EVENT_NAME))
                         //Set S button performed game event asset
                         inputSystem.PcMapReferences.KeyboardInput.SButtonInput.ButtonPerformed.GameEvent =
                         (GameEvent)scriptableSButtonPerformedGameEvent;
@@ -320,9 +302,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .S_BUTTON_CANCELED_GAME_EVENT_NAME,
-                        out ScriptableObject scriptableSButtonCanceledGameEvent, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .S_BUTTON_CANCELED_GAME_EVENT_NAME)))
+                        out ScriptableObject scriptableSButtonCanceledGameEvent,
+                         "couldnt get " + keyboardInputAssetsScriptableObjectsNaming.S_BUTTON_CANCELED_GAME_EVENT_NAME))
                         //Set S button canceled game event asset
                         inputSystem.PcMapReferences.KeyboardInput.SButtonInput.ButtonCanceled.GameEvent =
                         (GameEvent)scriptableSButtonCanceledGameEvent;
@@ -335,9 +316,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .D_BUTTON_PERFORMED_VARIABLE_NAME,
-                        out ScriptableObject scriptableDButtonPerformedVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .D_BUTTON_PERFORMED_VARIABLE_NAME)))
+                        out ScriptableObject scriptableDButtonPerformedVariable,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.D_BUTTON_PERFORMED_VARIABLE_NAME))
                         //Set D button performed variable asset
                         inputSystem.PcMapReferences.KeyboardInput.DButtonInput.ButtonPerformed.VariableValue =
                         (BoolVariable)scriptableDButtonPerformedVariable;
@@ -349,9 +329,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .D_BUTTON_CANCELED_VARIABLE_NAME,
-                        out ScriptableObject scriptableDButtonCanceledVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .D_BUTTON_CANCELED_VARIABLE_NAME)))
+                        out ScriptableObject scriptableDButtonCanceledVariable,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.D_BUTTON_CANCELED_VARIABLE_NAME))
                         //Set D button canceled variable asset
                         inputSystem.PcMapReferences.KeyboardInput.DButtonInput.ButtonCanceled.VariableValue =
                         (BoolVariable)scriptableDButtonCanceledVariable;
@@ -363,9 +342,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .D_BUTTON_PERFORMED_GAME_EVENT_NAME,
-                        out ScriptableObject scriptableDButtonPerformedGameEvent, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .D_BUTTON_PERFORMED_GAME_EVENT_NAME)))
+                        out ScriptableObject scriptableDButtonPerformedGameEvent,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.D_BUTTON_PERFORMED_GAME_EVENT_NAME))
                         //Set D button performed game event asset
                         inputSystem.PcMapReferences.KeyboardInput.DButtonInput.ButtonPerformed.GameEvent =
                         (GameEvent)scriptableDButtonPerformedGameEvent;
@@ -377,9 +355,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .D_BUTTON_CANCELED_GAME_EVENT_NAME,
-                        out ScriptableObject scriptableDButtonCanceledGameEvent, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .D_BUTTON_CANCELED_GAME_EVENT_NAME)))
+                        out ScriptableObject scriptableDButtonCanceledGameEvent,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.D_BUTTON_CANCELED_GAME_EVENT_NAME))
                         //Set D button canceled game event asset
                         inputSystem.PcMapReferences.KeyboardInput.DButtonInput.ButtonCanceled.GameEvent =
                         (GameEvent)scriptableDButtonCanceledGameEvent;
@@ -392,9 +369,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .W_BUTTON_PERFORMED_VARIABLE_NAME,
-                        out ScriptableObject scriptableWButtonPerformedVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .W_BUTTON_PERFORMED_VARIABLE_NAME)))
+                        out ScriptableObject scriptableWButtonPerformedVariable,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.W_BUTTON_PERFORMED_VARIABLE_NAME))
                         //Set W button performed variable asset
                         inputSystem.PcMapReferences.KeyboardInput.WButtonInput.ButtonPerformed.VariableValue =
                         (BoolVariable)scriptableWButtonPerformedVariable;
@@ -406,9 +382,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .W_BUTTON_CANCELED_VARIABLE_NAME,
-                        out ScriptableObject scriptableWButtonCanceledVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .W_BUTTON_CANCELED_VARIABLE_NAME)))
+                        out ScriptableObject scriptableWButtonCanceledVariable,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.W_BUTTON_CANCELED_VARIABLE_NAME))
                         //Set W button canceled variable asset
                         inputSystem.PcMapReferences.KeyboardInput.WButtonInput.ButtonCanceled.VariableValue =
                         (BoolVariable)scriptableWButtonCanceledVariable;
@@ -420,9 +395,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .W_BUTTON_PERFORMED_GAME_EVENT_NAME,
-                        out ScriptableObject scriptableWButtonPerformedGameEvent, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .W_BUTTON_PERFORMED_GAME_EVENT_NAME)))
+                        out ScriptableObject scriptableWButtonPerformedGameEvent,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.W_BUTTON_PERFORMED_GAME_EVENT_NAME))
                         //Set W button performed game event asset
                         inputSystem.PcMapReferences.KeyboardInput.WButtonInput.ButtonPerformed.GameEvent =
                         (GameEvent)scriptableWButtonPerformedGameEvent;
@@ -434,9 +408,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .W_BUTTON_CANCELED_GAME_EVENT_NAME,
-                        out ScriptableObject scriptableWButtonCanceledGameEvent, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .W_BUTTON_CANCELED_GAME_EVENT_NAME)))
+                        out ScriptableObject scriptableWButtonCanceledGameEvent,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.W_BUTTON_CANCELED_GAME_EVENT_NAME))
                         //Set W button canceled game event asset
                         inputSystem.PcMapReferences.KeyboardInput.WButtonInput.ButtonCanceled.GameEvent =
                         (GameEvent)scriptableWButtonCanceledGameEvent;
@@ -449,9 +422,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .SPACE_BUTTON_PERFORMED_VARIABLE_NAME,
-                        out ScriptableObject scriptableSpaceButtonPerformedVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .SPACE_BUTTON_PERFORMED_VARIABLE_NAME)))
+                        out ScriptableObject scriptableSpaceButtonPerformedVariable,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.SPACE_BUTTON_PERFORMED_VARIABLE_NAME))
                         //Set space button performed variable asset
                         inputSystem.PcMapReferences.KeyboardInput.SpaceButtonInput.ButtonPerformed.VariableValue =
                         (BoolVariable)scriptableSpaceButtonPerformedVariable;
@@ -463,9 +435,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .SPACE_BUTTON_CANCELED_VARIABLE_NAME,
-                        out ScriptableObject scriptableSpaceButtonCanceledVariable, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .SPACE_BUTTON_CANCELED_VARIABLE_NAME)))
+                        out ScriptableObject scriptableSpaceButtonCanceledVariable,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.SPACE_BUTTON_CANCELED_VARIABLE_NAME))
                         //Set space button canceled variable asset
                         inputSystem.PcMapReferences.KeyboardInput.SpaceButtonInput.ButtonCanceled.VariableValue =
                         (BoolVariable)scriptableSpaceButtonCanceledVariable;
@@ -477,9 +448,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .SPACE_BUTTON_PERFORMED_GAME_EVENT_NAME,
-                        out ScriptableObject scriptableSpaceButtonPerformedGameEvent, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .SPACE_BUTTON_PERFORMED_GAME_EVENT_NAME)))
+                        out ScriptableObject scriptableSpaceButtonPerformedGameEvent,
+                         "couldnt get " + keyboardInputAssetsScriptableObjectsNaming.SPACE_BUTTON_PERFORMED_GAME_EVENT_NAME))
                         //Set space button performed game event asset
                         inputSystem.PcMapReferences.KeyboardInput.SpaceButtonInput.ButtonPerformed.GameEvent =
                         (GameEvent)scriptableSpaceButtonPerformedGameEvent;
@@ -491,9 +461,8 @@ namespace MECS.Core
                     if (CollectionsTools.dictionaryTools.
                         GetValue(MECSSettings.InputScriptableDictionary, keyboardInputAssetsScriptableObjectsNaming
                         .SPACE_BUTTON_CANCELED_GAME_EVENT_NAME,
-                        out ScriptableObject scriptableSpaceButtonCanceledGameEvent, complexDebugInformation
-                        .AddTempCustomText("couldnt get " + keyboardInputAssetsScriptableObjectsNaming
-                        .SPACE_BUTTON_CANCELED_GAME_EVENT_NAME)))
+                        out ScriptableObject scriptableSpaceButtonCanceledGameEvent,
+                        " couldnt get " + keyboardInputAssetsScriptableObjectsNaming.SPACE_BUTTON_CANCELED_GAME_EVENT_NAME))
                         //Set space button canceled game event asset
                         inputSystem.PcMapReferences.KeyboardInput.SpaceButtonInput.ButtonCanceled.GameEvent =
                         (GameEvent)scriptableSpaceButtonCanceledGameEvent;
@@ -509,7 +478,8 @@ namespace MECS.Core
 
                 //Debug if input is configured
                 if (isInputSystemConfigured)
-                    DebugTools.DebugLog(new ComplexDebugInformation("ConfigureMECSInputCommand", "Execute()", "input system configured"));
+                    new NotificationCommand<DebugArgs>(this, new DebugArgs(" input system configured", LogType.Error,
+                    new System.Diagnostics.StackTrace(true))).Execute();
             }
 
             return isInputSystemConfigured;

@@ -7,6 +7,7 @@ using MECS.Core;
 using MECS.Events;
 using MECS.Patrons.Commands;
 using static MECS.Tools.DebugTools;
+using System.Diagnostics;
 
 namespace MECS.Filters
 {
@@ -34,33 +35,35 @@ namespace MECS.Filters
         }
 
         //ASystem, check if all the values on IFilterData are correct
-        protected override bool IsValidData(Component entity, IFilterData data,
-        ComplexDebugInformation complexDebugInformation)
+        protected override bool IsValidData(Component entity, IFilterData data)
         {
-            //Store arrays
-            int[] layersArray = data.LayersReference.Value;
-            string[] tagsArray = data.TagsReference.Value;
-            ScriptableEnum[] scriptableEnumArray = data.ScriptableEnums;
-            GameObject[] entityArray = data.EntitiesReference.Value;
+            //Return value
+            bool isCorrectData = false;
 
-            //Return result            
-            bool isCorrectData =
-                //Check layers reference
-                CollectionsTools.arrayTools.IsArraySafe(layersArray)
+            //Check parameters first
+            if (CollectionsTools.arrayTools.IsArrayContentSafe(new object[] { entity, data }, " given parameters aren't safe"))
+            {
+                //Return result            
+                isCorrectData =
+                    //Check layers reference
+                    CollectionsTools.arrayTools.IsArrayContentSafe(data.LayersReference.Value)
 
-                //Check tags array
-                || CollectionsTools.arrayTools.IsArraySafe(tagsArray)
+                    //Check tags array
+                    || CollectionsTools.arrayTools.IsArrayContentSafe(data.TagsReference.Value)
 
-                //Check scriptable enum array
-                || CollectionsTools.arrayTools.IsArraySafe(scriptableEnumArray)
+                    //Check scriptable enum array
+                    || CollectionsTools.arrayTools.IsArrayContentSafe(data.ScriptableEnums)
 
-                //Check entity array
-                || CollectionsTools.arrayTools.IsArraySafe(entityArray);
+                    //Check entity array
+                    || CollectionsTools.arrayTools.IsArrayContentSafe(data.EntitiesReference.Value);
 
-            //Debug if data is correct
-            if (!isCorrectData)
-                DebugTools.DebugError(complexDebugInformation
-                .AddTempCustomText("filter data must have one valid array on entity: " + entity.gameObject.name));
+                //Debug if data is correct
+                if (!isCorrectData)
+                    new NotificationCommand<DebugArgs>(entity,
+                    new DebugArgs(" filter data must have one valid array on entity: " + entity.gameObject.name,
+                    LogType.Error, new StackTrace(true)))
+                    .Execute();
+            }
 
             return isCorrectData;
         }
@@ -68,13 +71,8 @@ namespace MECS.Filters
         //ASystem, used to check filter data values and notify if are correct
         private void RespondFilterCheckingNotification(object sender, NotifyFilterSystemArgs args)
         {
-            //Debug information
-            BasicDebugInformation basicDebugInformation =
-            new(this.GetType().Name, "RespondFilterCheckingNotification(object sender, NotifyFilterSystemArgs args)");
-
             //Check if parameters are valid
-            if (ReferenceTools.AreEventParametersValid(sender, args,
-            new ComplexDebugInformation(basicDebugInformation, "given parameters on filter checking aren't valid")))
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given parameters on filter checking aren't valid"))
             {
                 //Entity references
                 GameObject entityToCheck = args.entityToCheck;
@@ -100,11 +98,12 @@ namespace MECS.Filters
                             bool returnValue = false;
 
                             //Avoid missing component
-                            if (enumComponent != null)
+                            if (ReferenceTools.IsValueSafe(enumComponent))
                                 //Avoid missing references
-                                if (ReferenceTools.CanUseData(enumComponent.DataReference, out ScriptableEnumData[] scriptableEnumDataArray))
+                                if (CollectionsTools.arrayTools.IsArrayContentSafe(enumComponent.Data,
+                                args.debugMessage + " given enum data array inst safe"))
                                     //Itinerate component data
-                                    foreach (var enumData in scriptableEnumDataArray)
+                                    foreach (var enumData in enumComponent.Data)
                                         //Check if its the correct enum
                                         if (CollectionsTools.arrayTools.HasArrayObject(scriptableEnums, enumData.ScriptableEnum))
                                         {
@@ -156,12 +155,12 @@ namespace MECS.Filters
                                 filterCheckPassTrackingInfo.scriptableEnums = scriptableEnums;
 
                             //Check data tracking current information
-                            if (CollectionsTools.arrayTools.IsArraySafe(data.FilterCheckingPassesTrackingInformation))
+                            if (ReferenceTools.IsValueSafe(data.FilterCheckingPassesTrackingInformation))
                             {
                                 //Add value to array
                                 if (CollectionsTools.arrayTools.AddValue(data.FilterCheckingPassesTrackingInformation,
                                 filterCheckPassTrackingInfo, out FilterCheckPassTrackingInfo[] trackingArray,
-                                new ComplexDebugInformation(basicDebugInformation, "couldnt add value to tracking array")))
+                                args.debugMessage + " couldnt add value to tracking array"))
                                     //Set new array on data
                                     data.FilterCheckingPassesTrackingInformation = trackingArray;
                             }
@@ -176,10 +175,9 @@ namespace MECS.Filters
 
                     //Try to convert sender to component type
                     if (TypeTools.ConvertToType<Component>(sender, out Component entityComponent,
-                    new ComplexDebugInformation(basicDebugInformation, "couldnt convert sender to component")))
+                    args.debugMessage + " couldnt convert sender to component"))
                         //Check if given data is valid
-                        if (IsValidData(entityComponent, data, new ComplexDebugInformation(basicDebugInformation,
-                        "given data isn't valid on entity: " + entityComponent.gameObject.name)))
+                        if (IsValidData(entityComponent, data))
                             //Check if can invoke and add data to pass list
                             if (CanInvoke(data.LayersReference.Value, data.TagsReference.Value, data.ScriptableEnums))
                                 passData.Add(data);
@@ -193,23 +191,16 @@ namespace MECS.Filters
 
                     //Itinerate valid filters
                     foreach (IFilterData data in passData)
-                    {
-                        //Convert
-                        IEventData eventData = data as IEventData;
-
-                        //Check conversion
-                        if (eventData != null)
+                        //Convert data to event data 
+                        if (TypeTools.ConvertToType(data, out IEventData eventData,
+                        args.debugMessage + " filter data doesnt implement IEventData interface"))
                             iEventDataList.Add(eventData);
-#if UNITY_EDITOR
-                        else Debug.LogWarning("Warning: Filter data doesnt implement IEventData interface, " + sender.ToString());
-#endif
-                    }
 
                     //Notify event system
                     new NotificationCommand<NotifyEventsInvocationArgs>(sender,
                         new NotifyEventsInvocationArgs(iEventDataList.ToArray(),
-                        new ComplexDebugInformation(basicDebugInformation, "couldnt raise events from given event data")),
-                        basicDebugInformation).Execute();
+                        args.debugMessage + " couldnt raise events from given event data"))
+                        .Execute();
                 }
             }
         }

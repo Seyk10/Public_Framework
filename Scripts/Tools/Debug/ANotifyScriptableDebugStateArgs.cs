@@ -1,17 +1,17 @@
 using System;
-using static MECS.Tools.DebugTools;
+using MECS.Events;
 
 namespace MECS.Tools
 {
     //* Base class for scriptable debug state notification commands
-    public abstract class ANotifyScriptableDebugStateArgs : EventArgs, IValuesChecking
+    public abstract class ANotifyScriptableDebugStateArgs : AEventArgs, IValuesChecking
     {
         //Variables
         public readonly Type scriptableType = null;
         public readonly string scriptableName = null;
 
         //Base builder
-        protected ANotifyScriptableDebugStateArgs(Type scriptableType, string scriptableName)
+        protected ANotifyScriptableDebugStateArgs(Type scriptableType, string scriptableName, string debugMessage) : base(debugMessage)
         {
             this.scriptableType = scriptableType;
             this.scriptableName = scriptableName;
@@ -19,9 +19,10 @@ namespace MECS.Tools
 
         //IValuesChecking method, check args values
         public bool AreValuesValid() =>
-        //Check debug information
-        ReferenceTools.AreValuesSafe(new object[] { scriptableType, scriptableName },
-        new ComplexDebugInformation(this.GetType().Name,
-        "AreValuesValid(ComplexDebugInformation complexDebugInformation)", "given parameters aren't safe"));
+            //Check scriptable type
+            ReferenceTools.IsValueSafe(scriptableType, " scriptableType isn't safe")
+
+            //Check scriptable name
+            && ReferenceTools.IsValueSafe(scriptableName, " scriptableName isn't safe");
     }
 }

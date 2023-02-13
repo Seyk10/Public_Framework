@@ -8,6 +8,7 @@ using MECS.Core;
 
 namespace MECS.Integrations
 {
+    //TODO: IMPLEMENT NEW DEBUG SYSTEM
     //* Scriptable object used to get current state of given steam achievement
     [CreateAssetMenu(fileName = "New_Achievement", menuName = "MECS/Integrations/Steam/Achievement")]
     public class SteamAchievementStateScriptable : ScriptableObject, IDisposable
@@ -27,8 +28,7 @@ namespace MECS.Integrations
             BasicDebugInformation basicDebugInformation = new(this.GetType().Name, "GetState()");
 
             //Avoid errors
-            if (ReferenceTools.IsVariableReferenceSafe(achievementName,
-            new ComplexDebugInformation(basicDebugInformation, "name of achievement isn't safe on " + this.name)))
+            if (ReferenceTools.IsVariableReferenceSafe(achievementName, " name of achievement isn't safe on " + this.name))
 
                 //Avoid if settings aren't loaded
                 if (MECSSettings.AreSettingsLoaded)

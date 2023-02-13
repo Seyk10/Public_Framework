@@ -18,7 +18,6 @@ using MECS.Timers;
 using MECS.Tools;
 using UnityEngine;
 using static MECS.Core.MECSDefaultSettingsNaming.SystemsNaming;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Core
 {
@@ -27,11 +26,6 @@ namespace MECS.Core
     public class CreateMECSSystemsCommand : ACreateMECSScriptableObjectCommand,
     ICommandReturn<Dictionary<string, ScriptableObject>>
     {
-        //ACreateMECSScriptableObjectCommand, base builder
-        public CreateMECSSystemsCommand(ComplexDebugInformation complexDebugInformation) :
-        base(complexDebugInformation)
-        { }
-
         //ICommandReturn, notify end of command
         public event EventHandler<Dictionary<string, ScriptableObject>> CommandFinishedEvent = null;
 
@@ -51,101 +45,65 @@ namespace MECS.Core
             //Create collider system asset
             bool couldntCreateAssets = CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.COLLIDER_SYSTEM_NAME,
             new CreatePersistentScriptableObjectCommand<ColliderSystem>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.COLLIDER_SYSTEM_NAME),
-            path, assetsNaming.COLLIDER_SYSTEM_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.COLLIDER_SYSTEM_NAME).Execute())
 
             //Create conditional system asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.CONDITIONAL_SYSTEM_NAME,
             new CreatePersistentScriptableObjectCommand<ConditionalSystem>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.CONDITIONAL_SYSTEM_NAME),
-            path, assetsNaming.CONDITIONAL_SYSTEM_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.CONDITIONAL_SYSTEM_NAME).Execute())
 
             //Create scriptable enum manager asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.SCRIPTABLE_ENUM_SYSTEM_NAME,
             new CreatePersistentScriptableObjectCommand<ScriptableEnumSystem>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.SCRIPTABLE_ENUM_SYSTEM_NAME),
-            path, assetsNaming.SCRIPTABLE_ENUM_SYSTEM_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.SCRIPTABLE_ENUM_SYSTEM_NAME).Execute())
 
             //Create event system asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.EVENT_SYSTEM_NAME,
             new CreatePersistentScriptableObjectCommand<EventSystem>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.EVENT_SYSTEM_NAME),
-            path, assetsNaming.EVENT_SYSTEM_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.EVENT_SYSTEM_NAME).Execute())
 
             //Create filter system asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.FILTER_SYSTEM_NAME,
             new CreatePersistentScriptableObjectCommand<FilterSystem>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.FILTER_SYSTEM_NAME),
-            path, assetsNaming.FILTER_SYSTEM_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.FILTER_SYSTEM_NAME).Execute())
 
             //Create game event system asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.GAME_EVENT_LISTENER_SYSTEM_NAME,
             new CreatePersistentScriptableObjectCommand<GameEventListenerSystem>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.GAME_EVENT_LISTENER_SYSTEM_NAME),
-            path, assetsNaming.GAME_EVENT_LISTENER_SYSTEM_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.GAME_EVENT_LISTENER_SYSTEM_NAME).Execute())
 
             //Create life cycle system asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.LIFE_CYCLE_SYSTEM_NAME,
             new CreatePersistentScriptableObjectCommand<LifeCycleSystem>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.LIFE_CYCLE_SYSTEM_NAME),
-            path, assetsNaming.LIFE_CYCLE_SYSTEM_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.LIFE_CYCLE_SYSTEM_NAME).Execute())
 
             //Create addresable entity system asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.ADDRESABLE_ENTITY_SYSTEM_NAME,
             new CreatePersistentScriptableObjectCommand<AddresableEntitySystem>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.ADDRESABLE_ENTITY_SYSTEM_NAME),
-            path, assetsNaming.ADDRESABLE_ENTITY_SYSTEM_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.ADDRESABLE_ENTITY_SYSTEM_NAME).Execute())
 
             //Create addresable pooled system asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.ADDRESABLE_POOLED_SYSTEM_NAME,
             new CreatePersistentScriptableObjectCommand<AddresablePooledSystem>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.ADDRESABLE_POOLED_SYSTEM_NAME),
-            path, assetsNaming.ADDRESABLE_POOLED_SYSTEM_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.ADDRESABLE_POOLED_SYSTEM_NAME).Execute())
 
             //Create casting system asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.CASTING_SYSTEM_NAME,
             new CreatePersistentScriptableObjectCommand<CastingSystem>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.CASTING_SYSTEM_NAME),
-            path, assetsNaming.CASTING_SYSTEM_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.CASTING_SYSTEM_NAME).Execute())
 
             //Create timer system asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.TIMER_SYSTEM_NAME,
             new CreatePersistentScriptableObjectCommand<TimerSystem>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.TIMER_SYSTEM_NAME),
-            path, assetsNaming.TIMER_SYSTEM_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.TIMER_SYSTEM_NAME).Execute())
 
             //Create input system asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.INPUT_SYSTEM_NAME,
             new CreatePersistentScriptableObjectCommand<InputSystem>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.INPUT_SYSTEM_NAME),
-            path, assetsNaming.INPUT_SYSTEM_NAME).Execute(),
-            complexDebugInformation);
+            (path, assetsNaming.INPUT_SYSTEM_NAME).Execute());
 
             //Debug about input system
-            DebugTools.DebugWarning(new ComplexDebugInformation("CreateMECSSystemsCommand", "Execute()",
-            "new input system isn't configure, set it manually or use MECS/Settings/Reset inputs"));
+            Debug.LogWarning("new input system isn't configure, set it manually or use MECS/Settings/Reset inputs");
 
             //Set on final dictionary values
             if (couldntCreateAssets)

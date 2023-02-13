@@ -13,11 +13,6 @@ namespace MECS.Core
     public class CreateMECSPCInputCommand : ACreateMECSScriptableObjectCommand,
     ICommandReturn<Dictionary<string, ScriptableObject>>
     {
-        //ACreateMECSScriptableObjectCommand, base builder
-        public CreateMECSPCInputCommand(DebugTools.ComplexDebugInformation complexDebugInformation) :
-        base(complexDebugInformation)
-        { }
-
         //ACreateMECSScriptableObjectCommand, notify end of command
         public event EventHandler<Dictionary<string, ScriptableObject>> CommandFinishedEvent = null;
 
@@ -25,14 +20,12 @@ namespace MECS.Core
         public Dictionary<string, ScriptableObject> Execute()
         {
             //Store mouse and keyboard assets 
-            Dictionary<string, ScriptableObject> mouseAssets = new CreateMECSMouseInputCommand(complexDebugInformation).Execute(),
-            keyboardAssets = new CreateMECSKeyboardInputCommand(complexDebugInformation).Execute();
+            Dictionary<string, ScriptableObject> mouseAssets = new CreateMECSMouseInputCommand().Execute(),
+            keyboardAssets = new CreateMECSKeyboardInputCommand().Execute();
 
             //Check if dictionaries are valid
-            bool validDictionaries = ReferenceTools.IsValueSafe(mouseAssets, complexDebugInformation.
-            AddTempCustomText("mouse input assets isn't safe"))
-            && ReferenceTools.IsValueSafe(keyboardAssets, complexDebugInformation.
-            AddTempCustomText("keyboard input assets isn't safe"));
+            bool validDictionaries = ReferenceTools.IsValueSafe(mouseAssets, " mouse input assets isn't safe")
+            && ReferenceTools.IsValueSafe(keyboardAssets, " keyboard input assets isn't safe");
 
             //Set assets
             if (validDictionaries)
@@ -40,8 +33,7 @@ namespace MECS.Core
                 //Merge mouse and keyboard dictionaries
                 bool canMerge = CollectionsTools.dictionaryTools.MergeDictionaries(
                     mouseAssets, keyboardAssets,
-                    out Dictionary<string, ScriptableObject> mergedDictionary, complexDebugInformation
-                    .AddTempCustomText("couldnt merge mouse and keyboard asset dictionaries"));
+                    out Dictionary<string, ScriptableObject> mergedDictionary, "couldnt merge mouse and keyboard asset dictionaries");
 
                 //Set merged value
                 if (canMerge)

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using MECS.Collections;
+using MECS.Patrons.Commands;
+using MECS.Tools;
 using UnityEngine;
 
 namespace MECS.Patrons.StateMachine
@@ -20,36 +22,23 @@ namespace MECS.Patrons.StateMachine
             bool canAdd = false;
 
             //Check if list contains type
-            if (!CollectionsTools.ListContainsType(statesList, state.GetType(), out IState value))
+            if (!CollectionsTools.listTools.ListContainsType(statesList, state.GetType(), out IState value))
             {
                 //Add value
                 canAdd = true;
                 statesList.Add(state);
             }
-#if UNITY_EDITOR
-            else Debug.LogWarning("Warning: State machine already contains given type.");
-#endif
+            else
+                new NotificationCommand<DebugArgs>(this, new DebugArgs(" state machine already contains given type", LogType.Error,
+                    new System.Diagnostics.StackTrace(true))).Execute();
 
             return canAdd;
         }
 
         //Remove a state from available states and return if state was removed, only allow one object of the same type
-        public bool RemoveState(IState state)
-        {
-            //Variables
-            bool returnValue = true;
+        public bool RemoveState(IState state) =>
+            CollectionsTools.listTools.ListRemoveType(statesList, state.GetType(), " couldnt remove given type");
 
-            //Check if list have given type
-            if (!CollectionsTools.ListRemoveType(statesList, state.GetType()))
-            {
-                returnValue = false;
-#if UNITY_EDITOR
-                Debug.LogWarning("Warning: Given type doesnt exist in availble states of state machine.");
-#endif
-            }
-
-            return returnValue;
-        }
 
         //Set a state from the availble states
         // T2 = Type of state to be used
@@ -57,7 +46,9 @@ namespace MECS.Patrons.StateMachine
         {
             //Check if list have given type and it inst running
             bool isStateRunning = currentState is T2,
-            canSetState = CollectionsTools.ListContainsType<IState, T2>(statesList, out T2 state) && !isStateRunning;
+            canSetState = CollectionsTools.listTools.ListContainsType<IState, T2>(statesList, out T2 state,
+            " state machine doesnt contains given state type")
+            && !isStateRunning;
 
             //Check if can set state
             if (canSetState)
@@ -67,16 +58,18 @@ namespace MECS.Patrons.StateMachine
                 currentState = newState;
                 newState.RunState();
             }
-#if UNITY_EDITOR
-            else if (isStateRunning) Debug.LogWarning("Warning: State is already running.");
-            else Debug.LogWarning("Warning: State machine doesnt contains given state type.");
-#endif
+            //Debug if state is already running
+            else if (isStateRunning)
+                new NotificationCommand<DebugArgs>(this, new DebugArgs(" state is already running", LogType.Error,
+                new System.Diagnostics.StackTrace(true))).Execute();
         }
 
         //Check if state machine list has given type add to state list
-        public bool ContainsState(IState state) => CollectionsTools.ListContainsType<IState>(statesList, state.GetType(), out IState listValue);
+        public bool ContainsState(IState state) =>
+            CollectionsTools.listTools.ListContainsType<IState>(statesList, state.GetType(), out IState listValue);
 
         //Check if state machine list has given type add to state list
-        public bool ContainsState<T2>() => CollectionsTools.ListContainsType<IState, T2>(statesList, out T2 state);
+        public bool ContainsState<T2>() =>
+            CollectionsTools.listTools.ListContainsType<IState, T2>(statesList, out T2 state);
     }
 }

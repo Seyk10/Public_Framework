@@ -26,11 +26,6 @@ namespace MECS.Core
     public class CreateMECSManagersCommand : ACreateMECSScriptableObjectCommand,
     ICommandReturn<Dictionary<string, ScriptableObject>>
     {
-        //ACreateMECSScriptableObjectCommand, base builder
-        public CreateMECSManagersCommand(DebugTools.ComplexDebugInformation complexDebugInformation) :
-        base(complexDebugInformation)
-        { }
-
         //ICommandReturn, notify end of command
         public event EventHandler<Dictionary<string, ScriptableObject>> CommandFinishedEvent = null;
 
@@ -50,97 +45,62 @@ namespace MECS.Core
             //Create collider manager asset
             bool couldntCreateAssets = CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.COLLIDER_MANAGER_NAME,
             new CreatePersistentScriptableObjectCommand<ColliderManager>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.COLLIDER_MANAGER_NAME),
-            path, assetsNaming.COLLIDER_MANAGER_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.COLLIDER_MANAGER_NAME).Execute())
 
             //Create conditional manager asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.CONDITIONAL_MANAGER_NAME,
             new CreatePersistentScriptableObjectCommand<ConditionalManager>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.CONDITIONAL_MANAGER_NAME),
-            path, assetsNaming.CONDITIONAL_MANAGER_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.CONDITIONAL_MANAGER_NAME).Execute())
 
             //Create scriptable enum manager asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.SCRIPTABLE_ENUM_MANAGER_NAME,
             new CreatePersistentScriptableObjectCommand<ScriptableEnumManager>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.SCRIPTABLE_ENUM_MANAGER_NAME),
-            path, assetsNaming.SCRIPTABLE_ENUM_MANAGER_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.SCRIPTABLE_ENUM_MANAGER_NAME).Execute())
 
             //Create event manager asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.EVENT_MANAGER_NAME,
             new CreatePersistentScriptableObjectCommand<EventManager>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.EVENT_MANAGER_NAME),
-            path, assetsNaming.EVENT_MANAGER_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.EVENT_MANAGER_NAME).Execute())
 
             //Create filter manager asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.FILTER_MANAGER_NAME,
             new CreatePersistentScriptableObjectCommand<FilterManager>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.FILTER_MANAGER_NAME),
-            path, assetsNaming.FILTER_MANAGER_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.FILTER_MANAGER_NAME).Execute())
 
             //Create game event manager asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.GAME_EVENT_LISTENER_MANAGER_NAME,
             new CreatePersistentScriptableObjectCommand<GameEventListenerManager>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.GAME_EVENT_LISTENER_MANAGER_NAME),
-            path, assetsNaming.GAME_EVENT_LISTENER_MANAGER_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.GAME_EVENT_LISTENER_MANAGER_NAME).Execute())
 
             //Create life cycle manager asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.LIFE_CYCLE_MANAGER_NAME,
             new CreatePersistentScriptableObjectCommand<LifeCycleManager>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.LIFE_CYCLE_MANAGER_NAME),
-            path, assetsNaming.LIFE_CYCLE_MANAGER_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.LIFE_CYCLE_MANAGER_NAME).Execute())
 
             //Create addresable entity manager asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.ADDRESABLE_ENTITY_MANAGER_NAME,
             new CreatePersistentScriptableObjectCommand<AddresableEntityManager>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.ADDRESABLE_ENTITY_MANAGER_NAME),
-            path, assetsNaming.ADDRESABLE_ENTITY_MANAGER_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.ADDRESABLE_ENTITY_MANAGER_NAME).Execute())
 
             //Create addresable pooled manager asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.ADDRESABLE_POOLED_MANAGER_NAME,
             new CreatePersistentScriptableObjectCommand<AddresablePooledManager>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.ADDRESABLE_POOLED_MANAGER_NAME),
-            path, assetsNaming.ADDRESABLE_POOLED_MANAGER_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.ADDRESABLE_POOLED_MANAGER_NAME).Execute())
 
             //Create casting manager asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.CASTING_MANAGER_NAME,
             new CreatePersistentScriptableObjectCommand<CastingManager>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.CASTING_MANAGER_NAME),
-            path, assetsNaming.CASTING_MANAGER_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.CASTING_MANAGER_NAME).Execute())
 
             //Create timer manager asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.TIMER_MANAGER_NAME,
             new CreatePersistentScriptableObjectCommand<TimerManager>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.TIMER_MANAGER_NAME),
-            path, assetsNaming.TIMER_MANAGER_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.TIMER_MANAGER_NAME).Execute())
 
             //Create event tracking asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.EVENT_TRACKING_MANAGER_NAME,
             new CreatePersistentScriptableObjectCommand<EventTrackingManager>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.EVENT_TRACKING_MANAGER_NAME),
-            path, assetsNaming.EVENT_TRACKING_MANAGER_NAME).Execute(),
-            complexDebugInformation);
+            (path, assetsNaming.EVENT_TRACKING_MANAGER_NAME).Execute());
 
             //Set on final dictionary values
             if (couldntCreateAssets)

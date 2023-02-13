@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using MECS.Collections;
 using MECS.Core;
+using MECS.Patrons.Commands;
 using MECS.Patrons.ObjectPooling;
 using MECS.Tools;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.MemoryManagement.Entity.Pooling
 {
@@ -22,6 +24,7 @@ namespace MECS.MemoryManagement.Entity.Pooling
             //ASystem, base execution
             base.OnEnable();
 
+            //TODO: change to to args
             InitializePoolCommand.InitializePoolEvent += InitializePool;
             ReturnPooledEntityCommand.ReturnPooledEntityEvent += ReturnPooledObject;
             SpawnPooledEntityCommand.SpawnPooledEntityEvent += SpawnPooledEntityResponse;
@@ -35,6 +38,7 @@ namespace MECS.MemoryManagement.Entity.Pooling
             //ASystem, base execution
             base.OnDisable();
 
+            //TODO: change to to args
             InitializePoolCommand.InitializePoolEvent -= InitializePool;
             ReturnPooledEntityCommand.ReturnPooledEntityEvent -= ReturnPooledObject;
             SpawnPooledEntityCommand.SpawnPooledEntityEvent -= SpawnPooledEntityResponse;
@@ -44,15 +48,13 @@ namespace MECS.MemoryManagement.Entity.Pooling
             Dispose();
         }
 
+        //TODO: change to to args
         //Methods
         //Set pool initial values
         private void InitializePool(object sender, AddresableEntityPool pool)
         {
-            //Check if given pool is initialized
-            bool emptyPool = pool.ObjectPool == null;
-
             //Initialize pool if its necessary
-            if (emptyPool)
+            if (!ReferenceTools.IsValueSafe(pool.ObjectPool))
             {
                 //Local method, create a new game object from loaded asset reference
                 GameObject CreateNewInstance()
@@ -97,11 +99,11 @@ namespace MECS.MemoryManagement.Entity.Pooling
                         void SetData()
                         {
                             //Check if should set array
-                            if (component.DataReference.GetValue() == null)
-                                component.DataReference.localValue = new AddresablePooledData[1] { new AddresablePooledData() };
+                            if (!ReferenceTools.IsValueSafe(component.Data))
+                                component.Data = new AddresablePooledData[1] { new AddresablePooledData() };
 
                             //Store data
-                            AddresablePooledData[] dataArray = component.DataReference.GetValue();
+                            AddresablePooledData[] dataArray = component.Data;
 
                             //Store returned entities, avoid return twice
                             List<GameObject> returnedEntities = new List<GameObject>();
@@ -109,10 +111,10 @@ namespace MECS.MemoryManagement.Entity.Pooling
                             //Intenerate to check if should set inside values
                             foreach (AddresablePooledData data in dataArray)
                             {
-                                if (data.AddresableEntityPool == null)
+                                if (!ReferenceTools.IsValueSafe(data.AddresableEntityPool))
                                     data.AddresableEntityPool = pool;
 
-                                if (data.AssociatedEntity == null)
+                                if (!ReferenceTools.IsValueSafe(data.AssociatedEntity))
                                     data.AssociatedEntity = loadedEntity;
 
                                 //Return new entity to pool
@@ -127,8 +129,11 @@ namespace MECS.MemoryManagement.Entity.Pooling
                             }
                         }
                     }
+                    //Notify debug manager
                     else
-                        Debug.LogWarning("Warning: Tried to release a invalid loaded asset reference");
+                        new NotificationCommand<DebugArgs>(sender,
+                        new DebugArgs(" tried to release a invalid loaded asset reference", LogType.Warning,
+                        new System.Diagnostics.StackTrace(true))).Execute();
                 }
 
                 //Local method, destroy entity at pool max size capacity
@@ -138,23 +143,12 @@ namespace MECS.MemoryManagement.Entity.Pooling
                     Addressables.ReleaseInstance(entity);
 
                     //Avoid errors
-                    if (entity != null)
+                    if (ReferenceTools.IsValueSafe(entity, " tried to destroy a empty entity reference"))
                         MonoBehaviour.Destroy(entity);
-#if UNITY_EDITOR
-                    else
-                        Debug.LogWarning("Warning:  Tried to destroy a empty entity reference");
-#endif
                 }
 
                 //Local method, check if entity inst null
-                void ActionOnGet(GameObject entity)
-                {
-#if UNITY_EDITOR
-                    //Avoid missing references
-                    if (entity == null)
-                        Debug.LogWarning("Warning: Missing reference on Get()");
-#endif
-                }
+                void ActionOnGet(GameObject entity) => ReferenceTools.IsValueSafe(entity, " missing reference on Get()");
 
                 //Local method, disable entity on release
                 void ActionOnReturn(GameObject entity) => entity.SetActive(false);
@@ -164,86 +158,83 @@ namespace MECS.MemoryManagement.Entity.Pooling
                     new ObjectPool<GameObject>(CreateNewInstance, ActionOnGet, ActionOnReturn, ActionOnDestroy,
                      10, pool.PoolMaxSize, pool.PoolDangerSize, pool.CanReturnEntities, pool.CanExpandPool);
             }
-            //Debug errors
-#if UNITY_EDITOR
-            else Debug.LogWarning("Warning: Tried to initialize a already initialized object pool.");
-#endif
+            //Notify debug manager  
+            else
+                new NotificationCommand<DebugArgs>(sender,
+                new DebugArgs(" tried to initialize a already initialized object pool", LogType.Warning,
+                new StackTrace(true))).Execute();
         }
 
+        //TODO: change to to args
+        //TODO: Add pool initialization if it hasn't
         //Return pooled object to the pool
         private void ReturnPooledObject(object sender, AddresablePooledComponent component)
         {
-            bool missingValues = sender == null || component == null;
-
             //Avoid errors            
-            if (!missingValues)
+            if (CollectionsTools.arrayTools.IsArrayContentSafe(new object[] { sender, component },
+            " tried to return pooled entity with null values"))
             {
                 //Store entity data and return it
-                AddresablePooledData[] entityData = component.DataReference.GetValue();
+                AddresablePooledData[] entityData = component.Data;
                 AddresablePooledData data = entityData[0];
 
-                //Check if cna return current entity
-                bool canReturn = !data.IsPooledObject;
-
                 //Return entity
-                if (canReturn)
+                if (!data.IsPooledObject)
                 {
                     data.IsPooledObject = true;
                     data.AddresableEntityPool.ObjectPool.ReturnObject(data.AssociatedEntity);
                 }
-#if UNITY_EDITOR
-                else Debug.LogWarning("Warning: Tried to return an already returned entity");
-#endif  
+                //Notify debug manager
+                else
+                    new NotificationCommand<DebugArgs>(sender,
+                    new DebugArgs(" tried to return an already returned entity", LogType.Warning, new StackTrace(true))).Execute();
             }
-#if UNITY_EDITOR
-            else Debug.LogWarning("Warning: Tried to return pooled entity with null values.");
-#endif
         }
 
         //Response to spawn notification, instantiate a new entity from target pool
         private void SpawnPooledEntityResponse(object sender, SpawnPooledEntityArgs args)
         {
-            //Variables
-            //Store reference
-            AddresableEntityPool addresableEntityPool = args.addresableEntityPool;
-            //Check if given pool is initialized
-            bool emptyPool = addresableEntityPool.ObjectPool == null;
-
-            //Initialize pool if its necessary
-            if (!emptyPool)
+            //Check parameters
+            if (ReferenceTools.AreEventParametersValid(sender, args, " given event parameters aren't valid"))
             {
-                //Spawn object
-                GameObject getEntity = addresableEntityPool.ObjectPool.Get();
-
-                if (getEntity != null)
+                //Initialize pool if its necessary
+                if (ReferenceTools.IsValueSafe(args.addresableEntityPool.ObjectPool,
+                args.debugMessage + " tried to spawn from not initialized pool"))
                 {
-                    //Set is pooled value
-                    if (getEntity.TryGetComponent<AddresablePooledComponent>(out AddresablePooledComponent component))
+                    //Store reference
+                    AddresableEntityPool addresableEntityPool = args.addresableEntityPool;
+
+                    //Spawn object
+                    GameObject getEntity = addresableEntityPool.ObjectPool.Get();
+
+                    //Check if could get entity from pool
+                    if (ReferenceTools.IsValueSafe(getEntity,
+                    args.debugMessage + " got a null reference from pool, try to increase configuration values"))
                     {
-                        //Set not pooled value
-                        component.DataReference.GetValue()[0].IsPooledObject = false;
+                        //Set is pooled value
+                        if (getEntity.TryGetComponent<AddresablePooledComponent>(out AddresablePooledComponent component))
+                        {
+                            //Set not pooled value
+                            component.Data[0].IsPooledObject = false;
 
-                        //Set transforms
-                        if (addresableEntityPool.SetPositionOnSpawn)
-                            getEntity.transform.position = args.spawnTransform.position;
+                            //Set transforms
+                            if (addresableEntityPool.SetPositionOnSpawn)
+                                getEntity.transform.position = args.spawnTransform.position;
 
-                        if (addresableEntityPool.SetRotationOnSpawn)
-                            getEntity.transform.rotation = args.spawnTransform.parent.rotation * args.spawnTransform.localRotation;
+                            if (addresableEntityPool.SetRotationOnSpawn)
+                                getEntity.transform.rotation = args.spawnTransform.parent.rotation * args.spawnTransform.localRotation;
 
-                        //Activate
-                        getEntity.SetActive(true);
+                            //Activate
+                            getEntity.SetActive(true);
+                        }
+                        //Notify debug manager
+                        else
+                            new NotificationCommand<DebugArgs>(sender,
+                            new DebugArgs(args.debugMessage + " pooled entity doesnt have AddresablePooledComponent", LogType.Error,
+                            new StackTrace(true))).Execute();
                     }
-#if UNITY_EDITOR
-                    else Debug.LogWarning("Warning: Pooled entity doesnt have AddresablePooledComponent");
-#endif
                 }
-#if UNITY_EDITOR
-                else Debug.LogWarning("Warning: Got a null reference from pool, try to increase configuration values");
-#endif
             }
-#if UNITY_EDITOR
-            else Debug.LogWarning("Warning: Tried to spawn from not initialized pool");
-#endif
         }
 
         //IDisposable, used to release all the pools and entities when system is unloaded
@@ -262,27 +253,16 @@ namespace MECS.MemoryManagement.Entity.Pooling
         }
 
         //ASystem, check if data values are valid
-        protected override bool IsValidData(Component entityComponent, IAddresablePooledData data,
-        ComplexDebugInformation complexDebugInformation)
-        {
-            //Debug information
-            BasicDebugInformation basicDebugInformation = new(this.GetType().Name,
-             "IsValidData(Component entity, IAddresablePooledData data)");
-            string entityName = entityComponent.gameObject.name;
-
-            return
+        protected override bool IsValidData(Component entityComponent, IAddresablePooledData data) =>
             //Check parameters
             //Check entityComponent parameter
-            ReferenceTools.IsValueSafe(entityComponent, new ComplexDebugInformation(basicDebugInformation,
-            "entityComponent parameter isn't safe"))
+            ReferenceTools.IsValueSafe(entityComponent, " entityComponent parameter isn't safe")
 
             //Check data parameter
-            && ReferenceTools.IsValueSafe(data, new ComplexDebugInformation(basicDebugInformation,
-            "data parameter isn't safe"))
+            && ReferenceTools.IsValueSafe(data, " data parameter isn't safe")
 
             //Check AddresableEntityPool value on data
-            && ReferenceTools.IsValueSafe(data.AddresableEntityPool, complexDebugInformation
-            .AddTempCustomText("addresableEntityPool isn't safe on entity: " + entityName));
-        }
+            && ReferenceTools.IsValueSafe(data.AddresableEntityPool,
+            " addresableEntityPool isn't safe on entity: " + entityComponent.gameObject.name);
     }
 }

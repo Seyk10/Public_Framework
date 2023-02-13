@@ -39,9 +39,13 @@ namespace MECS.Patrons.Singleton
                 returnValue = singletonReference;
 #if UNITY_EDITOR
                 //Check if references are equal
-                if (singletonReference.Equals(newReference)) SingletonTools.DebugDuplicateSingleton();
-                else if (singletonReference == null) Debug.LogWarning("Singleton reference inst empty.");
-                else if (newReference == null) ReferenceTools.DebugErrorNoValidReference("CreateSingletonCommand", "Execute()", "newReference");
+                if (singletonReference.Equals(newReference))
+                    SingletonTools.DebugDuplicateSingleton();
+                else if (ReferenceTools.IsValueSafe(singletonReference))
+                    new NotificationCommand<DebugArgs>(this,
+                    new DebugArgs(" singleton reference inst empty", LogType.Error, new System.Diagnostics.StackTrace(true))).Execute();
+                else
+                    ReferenceTools.IsValueSafe(newReference, " newReference isn't valid");
 #endif
             }
 

@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using MECS.Collections;
 using MECS.Patrons.Commands;
-using MECS.Tools;
 using UnityEngine;
 
 namespace MECS.Core
@@ -13,11 +12,6 @@ namespace MECS.Core
     public class CreateMECSScriptableObjectsCommand : ACreateMECSScriptableObjectCommand,
     ICommandReturn<Dictionary<string, ScriptableObject>>
     {
-        //ACreateMECSScriptableObjectCommand, base builder
-        public CreateMECSScriptableObjectsCommand(DebugTools.ComplexDebugInformation complexDebugInformation) :
-        base(complexDebugInformation)
-        { }
-
         //ICommandReturn, notify end of command
         public event EventHandler<Dictionary<string, ScriptableObject>> CommandFinishedEvent = null;
 
@@ -27,54 +21,52 @@ namespace MECS.Core
             //Store dictionaries of assets
             //Casting related assets
             Dictionary<string, ScriptableObject> castingDictionary =
-            new CreateMECSCastingScriptableCommands(
-                complexDebugInformation.AddTempCustomText("couldnt create casting assets")).Execute(),
+            new CreateMECSCastingScriptableCommands().Execute(),
             //Conditionals related assets   
-            conditionalsDictionary = new CreateMECSConditionalsScriptableCommands(
-                complexDebugInformation.AddTempCustomText("couldnt create conditionals assets")).Execute(),
+            conditionalsDictionary = new CreateMECSConditionalsScriptableCommands().Execute(),
             //Timer related assets
-            timerDictionary = new CreateMECSTimerScriptableCommands(
-                complexDebugInformation.AddTempCustomText("couldnt create timer assets")).Execute(),
+            timerDictionary = new CreateMECSTimerScriptableCommands().Execute(),
             //AddresablePooled related assets
-            addresablePooledDictionary = new CreateMECSAddresablePooledScriptableCommands(
-                complexDebugInformation.AddTempCustomText("couldnt create addresable pooled assets")).Execute(),
+            addresablePooledDictionary = new CreateMECSAddresablePooledScriptableCommands().Execute(),
             //Functionalities related assets
-            functionalitiesDictionary = new CreateMECSFunctionalitiesScriptableCommands(
-                complexDebugInformation.AddTempCustomText("couldnt create functionalities assets")).Execute(),
+            functionalitiesDictionary = new CreateMECSFunctionalitiesScriptableCommands().Execute(),
             //GameEventListener related assets
-            gameEventListenerDictionary = new CreateMECSGameEventListenerScriptableCommands(
-                complexDebugInformation.AddTempCustomText("couldnt create game event assets")).Execute();
+            gameEventListenerDictionary = new CreateMECSGameEventListenerScriptableCommands().Execute();
 
             //Check all dictionaries
-            bool areDictionariesValid = CollectionsTools.dictionaryTools.AreValuesSafe(castingDictionary, complexDebugInformation)
-            && CollectionsTools.dictionaryTools.AreValuesSafe(conditionalsDictionary, complexDebugInformation)
-            && CollectionsTools.dictionaryTools.AreValuesSafe(timerDictionary, complexDebugInformation)
-            && CollectionsTools.dictionaryTools.AreValuesSafe(addresablePooledDictionary, complexDebugInformation)
-            && CollectionsTools.dictionaryTools.AreValuesSafe(functionalitiesDictionary, complexDebugInformation)
-            && CollectionsTools.dictionaryTools.AreValuesSafe(gameEventListenerDictionary, complexDebugInformation);
+            bool areDictionariesValid = CollectionsTools.dictionaryTools
+            .IsDictionaryContentSafe(castingDictionary, " given castingDictionary isn't safe")
+            && CollectionsTools.dictionaryTools
+            .IsDictionaryContentSafe(conditionalsDictionary, " given conditionalsDictionary isn't safe")
+            && CollectionsTools.dictionaryTools
+            .IsDictionaryContentSafe(timerDictionary, " given timerDictionary isn't safe")
+            && CollectionsTools.dictionaryTools
+            .IsDictionaryContentSafe(addresablePooledDictionary, " given addresablePooledDictionary isn't safe")
+            && CollectionsTools.dictionaryTools
+            .IsDictionaryContentSafe(functionalitiesDictionary, " given functionalitiesDictionary isn't safe")
+            && CollectionsTools.dictionaryTools
+            .IsDictionaryContentSafe(gameEventListenerDictionary, " given gameEventListenerDictionary isn't safe");
 
             //Merge dictionaries
             if (areDictionariesValid)
                 //Merge casting and conditionals
                 if (CollectionsTools.dictionaryTools.MergeDictionaries(conditionalsDictionary, castingDictionary,
-                out Dictionary<string, ScriptableObject> mergedDictionary01,
-                complexDebugInformation.AddTempCustomText("couldnt merge casting and conditionals dictionaries")))
+                out Dictionary<string, ScriptableObject> mergedDictionary01, " couldnt merge casting and conditionals dictionaries"))
                     //Merge mergedDictionary01 with timer dictionary
                     if (CollectionsTools.dictionaryTools.MergeDictionaries(mergedDictionary01, timerDictionary,
-                    out Dictionary<string, ScriptableObject> mergedDictionary02,
-                    complexDebugInformation.AddTempCustomText("couldnt merge mergedDictionary01 and timer dictionaries")))
+                    out Dictionary<string, ScriptableObject> mergedDictionary02, " couldnt merge mergedDictionary01 and timer dictionaries"))
                         //Merge mergedDictionary02 with addresable pooled dictionary
                         if (CollectionsTools.dictionaryTools.MergeDictionaries(mergedDictionary02, addresablePooledDictionary,
                         out Dictionary<string, ScriptableObject> mergedDictionary03,
-                        complexDebugInformation.AddTempCustomText("couldnt merge mergedDictionary02 and addresable pooled dictionaries")))
+                        " couldnt merge mergedDictionary02 and addresable pooled dictionaries"))
                             //Merge mergedDictionary03 with functionalities dictionary
                             if (CollectionsTools.dictionaryTools.MergeDictionaries(mergedDictionary03, functionalitiesDictionary,
                             out Dictionary<string, ScriptableObject> mergedDictionary04,
-                            complexDebugInformation.AddTempCustomText("couldnt merge mergedDictionary03 and functionalities dictionaries")))
+                            " couldnt merge mergedDictionary03 and functionalities dictionaries"))
                                 //Merge mergedDictionary04 with game event listener dictionary
                                 if (CollectionsTools.dictionaryTools.MergeDictionaries(mergedDictionary04, gameEventListenerDictionary,
                                 out Dictionary<string, ScriptableObject> mergedDictionary05,
-                                complexDebugInformation.AddTempCustomText("couldnt merge mergedDictionary04 and functionalities dictionaries")))
+                                " couldnt merge mergedDictionary04 and functionalities dictionaries"))
                                     //Set on final asset dictionary merged dictionaries
                                     assetsDictionary = mergedDictionary05;
 

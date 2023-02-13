@@ -1,59 +1,84 @@
 using System.Collections.Generic;
 using System;
-using static MECS.Tools.DebugTools;
 
 namespace MECS.Collections
 {
     //* Class used to store a responsive dictionary, raising events on each modification
     //* T = Key type
     //* T2 = Value type
-    public class ResponsiveDictionary<T, T2> : IDisposable
+    public class ResponsiveDictionary<T, T2> : IDisposable, IResponsiveCollection<ResponsiveDictionaryArgs<T, T2>>
     {
         //Variables
         public readonly Dictionary<T, T2> dictionary = new();
 
-        //Events
+        #region EVENTS
+        //IResponsiveCollection events
         public event EventHandler<ResponsiveDictionaryArgs<T, T2>> ElementAddedEvent = null,
             ElementRemovedEvent = null,
             FirstElementAddedEvent = null,
             LastElementRemovedEvent = null;
-
-        //Methods
-        //Add element to list and notify it
-        public bool AddElement(T key, T2 value, ComplexDebugInformation complexDebugInformation)
+        #endregion
+        #region ADD_METHODS
+        //Methods, add element to list and notify it, debug if couldnt add
+        public bool AddElement(T key, T2 value, string debugMessage)
         {
-            bool returnValue = CollectionsTools.dictionaryTools.AddValue(dictionary, key, value,
-            new ComplexDebugInformation("ResponsiveDictionary<T, T2>", "AddElement(T key, T2 value)", "couldnt add value to dictionary"));
+            bool returnValue = CollectionsTools.dictionaryTools.AddValue(dictionary, key, value, debugMessage);
 
-            //Notify if its the first element
+            //Notify if element is added
             if (returnValue)
             {
+                //Notify first element
                 if (dictionary.Count == 1)
-                    FirstElementAddedEvent?.Invoke(this, new ResponsiveDictionaryArgs<T, T2>(key, value, complexDebugInformation));
-                ElementAddedEvent?.Invoke(this, new ResponsiveDictionaryArgs<T, T2>(key, value, complexDebugInformation));
+                    FirstElementAddedEvent?.Invoke(this, new ResponsiveDictionaryArgs<T, T2>(key, value, debugMessage));
+
+                //Notify element added
+                ElementAddedEvent?.Invoke(this, new ResponsiveDictionaryArgs<T, T2>(key, value, debugMessage));
             }
 
             return returnValue;
         }
 
-        //Remove element from list and notify it
-        public bool RemoveElement(T key, ComplexDebugInformation complexDebugInformation)
+        //Method, add element to list and notify it
+        public bool AddElement(T key, T2 value)
+        {
+            bool returnValue = CollectionsTools.dictionaryTools.AddValue(dictionary, key, value);
+
+            //Notify if could add
+            if (returnValue)
+            {
+                //Notify first element added
+                if (dictionary.Count == 1)
+                    FirstElementAddedEvent?.Invoke(this, new ResponsiveDictionaryArgs<T, T2>(key, value, " first element added"));
+
+                //Notify element added
+                ElementAddedEvent?.Invoke(this, new ResponsiveDictionaryArgs<T, T2>(key, value, " element added"));
+            }
+
+            return returnValue;
+        }
+        #endregion
+        #region REMOVE_METHODS
+        //Method, remove element from list and notify it, debug if couldnt remove
+        public bool RemoveElement(T key, string debugMessage)
         {
             bool returnValue = CollectionsTools.dictionaryTools.RemoveValue(dictionary, key,
-            complexDebugInformation.AddTempCustomText("couldnt remove value from dictionary"));
+             debugMessage + " couldnt remove value from dictionary");
 
             //Notify if its the last element
             if (returnValue)
             {
+                //Notify last element removed
                 if (dictionary.Count == 0)
-                    LastElementRemovedEvent?.Invoke(this, new ResponsiveDictionaryArgs<T, T2>(key, default, complexDebugInformation));
-                ElementRemovedEvent?.Invoke(this, new ResponsiveDictionaryArgs<T, T2>(key, default, complexDebugInformation));
+                    LastElementRemovedEvent?.Invoke(this, new ResponsiveDictionaryArgs<T, T2>(key, default, debugMessage));
+
+                //Notify element removed
+                ElementRemovedEvent?.Invoke(this, new ResponsiveDictionaryArgs<T, T2>(key, default, debugMessage));
             }
 
             return returnValue;
         }
 
-        //Remove element from list and notify it
+        //Method, remove element from list and notify it
         public bool RemoveElement(T key)
         {
             bool returnValue = CollectionsTools.dictionaryTools.RemoveValue(dictionary, key);
@@ -61,21 +86,21 @@ namespace MECS.Collections
             //Notify if its the last element
             if (returnValue)
             {
+                //Notify last element removed
                 if (dictionary.Count == 0)
-                    LastElementRemovedEvent?.Invoke(this, new ResponsiveDictionaryArgs<T, T2>(key, default));
-                ElementRemovedEvent?.Invoke(this, new ResponsiveDictionaryArgs<T, T2>(key, default));
+                    LastElementRemovedEvent?.Invoke(this, new ResponsiveDictionaryArgs<T, T2>(key, default, " removed last element"));
+
+                //Notify element removed
+                ElementRemovedEvent?.Invoke(this, new ResponsiveDictionaryArgs<T, T2>(key, default, " element removed"));
             }
 
             return returnValue;
         }
-
-        //Check if list contains element
-        public bool ContainsElement(T key) => dictionary.ContainsKey(key);
-
-        //Clean all the lists
+        #endregion
+        //IDisposable method, clean all the lists
         public void Dispose() => dictionary.Clear();
 
-        //Make sure to call dispose
+        //GC, make sure to call dispose
         ~ResponsiveDictionary() => Dispose();
     }
 }

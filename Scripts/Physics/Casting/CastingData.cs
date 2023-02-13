@@ -13,6 +13,7 @@ namespace MECS.Physics.Casting
     [Serializable]
     public class CastingData : AData, ICastingData, IFilterData, IEventData
     {
+        #region CASTING_VALUES
         //ICastingData, editor variables
         [Header("Casting parameters")]
         [SerializeField] private EPhysicsCastingShape castingShape = EPhysicsCastingShape.Box;
@@ -35,7 +36,9 @@ namespace MECS.Physics.Casting
         public CastingStateMachine CastingStateMachine => castingStateMachine;
         public bool IsCastingInitialized { get; set; }
         public Coroutine CastingExecution { get; set; }
+        #endregion
 
+        #region FILTER_VALUES
         //IFilterData, editor variables
         [Header("Filter parameters")]
         [SerializeField] private IntArrayReference layersReference = null;
@@ -49,19 +52,23 @@ namespace MECS.Physics.Casting
         [SerializeField] private FilterCheckPassTrackingInfo[] filterCheckingPassesTrackingInformation = null;
         public FilterCheckPassTrackingInfo[] FilterCheckingPassesTrackingInformation
         { get => filterCheckingPassesTrackingInformation; set => filterCheckingPassesTrackingInformation = value; }
+        #endregion
 
+        #region EVENT_VALUES
         //IEventData, editor variables
         [Header("Event parameters")]
         [SerializeField] private EventReference eventReference = null;
         public EventReference EventReference => eventReference;
+        #endregion
 
+        #region ADATA_LIFE_CYCLE_NOTIFICATION_METHODS
         //AData method, notify data awake
-        public override void NotifyDataAwake(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataAwake(MonoBehaviour sender)
         {
             //Args to send
-            EntityAwakeArgs<ICastingData> castingArgs = new((ICastingData)this, complexDebugInformation);
-            EntityAwakeArgs<IFilterData> filterArgs = new((IFilterData)this, complexDebugInformation);
-            EntityAwakeArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityAwakeArgs<ICastingData> castingArgs = new((ICastingData)this, " couldnt notify ICastingData awake");
+            EntityAwakeArgs<IFilterData> filterArgs = new((IFilterData)this, " couldnt notify IFilterData awake");
+            EntityAwakeArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify IEventData awake");
 
             //Notify LifeCycleData 
             NotifyDataPhase<EntityAwakeArgs<ICastingData>, ICastingData>(sender, castingArgs);
@@ -72,12 +79,12 @@ namespace MECS.Physics.Casting
         }
 
         //AData method, notify data enable
-        public override void NotifyDataEnable(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataEnable(MonoBehaviour sender)
         {
             //Args to send
-            EntityEnableArgs<ICastingData> castingArgs = new((ICastingData)this, complexDebugInformation);
-            EntityEnableArgs<IFilterData> filterArgs = new((IFilterData)this, complexDebugInformation);
-            EntityEnableArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityEnableArgs<ICastingData> castingArgs = new((ICastingData)this, " couldnt notify ICastingData enable");
+            EntityEnableArgs<IFilterData> filterArgs = new((IFilterData)this, " couldnt notify IFilterData enable");
+            EntityEnableArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify IEventData enable");
 
             //Notify LifeCycleData 
             NotifyDataPhase<EntityEnableArgs<ICastingData>, ICastingData>(sender, castingArgs);
@@ -88,12 +95,12 @@ namespace MECS.Physics.Casting
         }
 
         //AData method, notify data disable
-        public override void NotifyDataDisable(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataDisable(MonoBehaviour sender)
         {
             //Args to send
-            EntityDisableArgs<ICastingData> castingArgs = new((ICastingData)this, complexDebugInformation);
-            EntityDisableArgs<IFilterData> filterArgs = new((IFilterData)this, complexDebugInformation);
-            EntityDisableArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityDisableArgs<ICastingData> castingArgs = new((ICastingData)this, " couldnt notify ICastingData disable");
+            EntityDisableArgs<IFilterData> filterArgs = new((IFilterData)this, " couldnt notify IFilterData disable");
+            EntityDisableArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify IEventData disable");
 
             //Notify LifeCycleData 
             NotifyDataPhase<EntityDisableArgs<ICastingData>, ICastingData>(sender, castingArgs);
@@ -104,12 +111,12 @@ namespace MECS.Physics.Casting
         }
 
         //AData method, notify data destroy
-        public override void NotifyDataDestroy(MonoBehaviour sender, DebugTools.ComplexDebugInformation complexDebugInformation)
+        public override void NotifyDataDestroy(MonoBehaviour sender)
         {
             //Args to send
-            EntityDestroyArgs<ICastingData> castingArgs = new((ICastingData)this, complexDebugInformation);
-            EntityDestroyArgs<IFilterData> filterArgs = new((IFilterData)this, complexDebugInformation);
-            EntityDestroyArgs<IEventData> eventArgs = new((IEventData)this, complexDebugInformation);
+            EntityDestroyArgs<ICastingData> castingArgs = new((ICastingData)this, " couldnt notify ICastingData destroy");
+            EntityDestroyArgs<IFilterData> filterArgs = new((IFilterData)this, " couldnt notify ICastingData destroy");
+            EntityDestroyArgs<IEventData> eventArgs = new((IEventData)this, " couldnt notify ICastingData destroy");
 
             //Notify LifeCycleData 
             NotifyDataPhase<EntityDestroyArgs<ICastingData>, ICastingData>(sender, castingArgs);
@@ -118,5 +125,6 @@ namespace MECS.Physics.Casting
             //Notify IEventData
             NotifyDataPhase<EntityDestroyArgs<IEventData>, IEventData>(sender, eventArgs);
         }
+        #endregion
     }
 }

@@ -2,6 +2,8 @@ using UnityEngine;
 using static MECS.Tools.DebugTools;
 using MECS.LifeCycle;
 using MECS.Tools;
+using System.Diagnostics;
+using MECS.Collections;
 
 namespace MECS.Core
 {
@@ -12,8 +14,10 @@ namespace MECS.Core
     {
         //Editor variables
         [Header("Data")]
-        [SerializeField] private DataReference<T, T2> dataReference = new();
-        public DataReference<T, T2> DataReference => dataReference;
+        [SerializeField] private T[] data = default;
+
+        //Attributes
+        public T[] Data { get => data; set => data = value; }
 
         //Variables
         protected string entityDebugInformation = null;
@@ -28,14 +32,16 @@ namespace MECS.Core
             entityDebugInformation = "Script " + this.GetType().ToString() + " on entity " + transform.gameObject.name;
 
             //Debug information
-            BasicDebugInformation basicDebugInformation = new(entityDebugInformation, "Awake()");
+            BasicDebugInformation basicDebugInformation = new(entityDebugInformation, new StackTrace());
 
-            //Avoid errors based on data reference
-            if (ReferenceTools.IsValueSafe(dataReference, new ComplexDebugInformation(basicDebugInformation,
-                "data reference isn't safe on entity: " + gameObject.name)))
-                //Execute notification
-                dataReference.NotifyDataPhase(this, ELifeCyclePhase.Awake,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt notify component awake"));
+            //Check if data array is safe
+
+            // //Avoid errors based on data reference
+            // if (CollectionsTools.arrayTools.IsArrayContentSafe(), new ComplexDebugInformation(basicDebugInformation,
+            //     "data reference isn't safe on entity: " + gameObject.name)))
+            //     //Execute notification
+            //     dataReference.NotifyDataPhase(this, ELifeCyclePhase.Awake,
+            //     new ComplexDebugInformation(basicDebugInformation, "couldnt notify component awake"));
         }
 
         //MonoBehaviour, notify component enables
@@ -44,11 +50,11 @@ namespace MECS.Core
             //Debug information
             BasicDebugInformation basicDebugInformation = new(entityDebugInformation, "OnEnable()");
 
-            if (ReferenceTools.IsValueSafe(dataReference, new ComplexDebugInformation(basicDebugInformation,
-                "data reference isn't safe on entity: " + gameObject.name)))
-                //Execute notification
-                dataReference.NotifyDataPhase(this, ELifeCyclePhase.Enable,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt notify component OnEnable"));
+            // if (ReferenceTools.IsValueSafe(dataReference, new ComplexDebugInformation(basicDebugInformation,
+            //     "data reference isn't safe on entity: " + gameObject.name)))
+            //     //Execute notification
+            //     dataReference.NotifyDataPhase(this, ELifeCyclePhase.Enable,
+            //     new ComplexDebugInformation(basicDebugInformation, "couldnt notify component OnEnable"));
         }
 
         //MonoBehaviour, notify component disables
@@ -57,11 +63,11 @@ namespace MECS.Core
             //Debug information
             BasicDebugInformation basicDebugInformation = new(entityDebugInformation, "OnDisable()");
 
-            if (ReferenceTools.IsValueSafe(dataReference, new ComplexDebugInformation(basicDebugInformation,
-                "data reference isn't safe on entity: " + gameObject.name)))
-                //Execute notification
-                dataReference.NotifyDataPhase(this, ELifeCyclePhase.Disable,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt notify component OnDisable"));
+            // if (ReferenceTools.IsValueSafe(dataReference, new ComplexDebugInformation(basicDebugInformation,
+            //     "data reference isn't safe on entity: " + gameObject.name)))
+            //     //Execute notification
+            //     dataReference.NotifyDataPhase(this, ELifeCyclePhase.Disable,
+            //     new ComplexDebugInformation(basicDebugInformation, "couldnt notify component OnDisable"));
         }
 
         //MonoBehaviour, notify component destroy
@@ -70,11 +76,11 @@ namespace MECS.Core
             //Debug information
             BasicDebugInformation basicDebugInformation = new(entityDebugInformation, "OnDestroy()");
 
-            if (ReferenceTools.IsValueSafe(dataReference, new ComplexDebugInformation(basicDebugInformation,
-                "data reference isn't safe on entity: " + gameObject.name)))
-                //Execute notification
-                dataReference.NotifyDataPhase(this, ELifeCyclePhase.Destroy,
-                new ComplexDebugInformation(basicDebugInformation, "couldnt notify component OnDestroy"));
+            // if (ReferenceTools.IsValueSafe(dataReference, new ComplexDebugInformation(basicDebugInformation,
+            //     "data reference isn't safe on entity: " + gameObject.name)))
+            //     //Execute notification
+            //     dataReference.NotifyDataPhase(this, ELifeCyclePhase.Destroy,
+            //     new ComplexDebugInformation(basicDebugInformation, "couldnt notify component OnDestroy"));
         }
     }
 }

@@ -15,11 +15,6 @@ namespace MECS.Core
     public class CreateMECSCastingScriptableCommands : ACreateMECSScriptableObjectCommand,
     ICommandReturn<Dictionary<string, ScriptableObject>>
     {
-        //ACreateMECSScriptableObjectCommand, base builder
-        public CreateMECSCastingScriptableCommands(DebugTools.ComplexDebugInformation complexDebugInformation) :
-        base(complexDebugInformation)
-        { }
-
         //ICommandReturn, notify end of command
         public event EventHandler<Dictionary<string, ScriptableObject>> CommandFinishedEvent = null;
 
@@ -41,17 +36,12 @@ namespace MECS.Core
             //Create start casting asset
             bool couldntCreateAssets = CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.START_CASTING_STATE_COMMAND_NAME,
             new CreatePersistentScriptableObjectCommand<StartCastingStateCommand>
-            (complexDebugInformation.AddTempCustomText("couldnt create " + assetsNaming.START_CASTING_STATE_COMMAND_NAME),
-            path, assetsNaming.START_CASTING_STATE_COMMAND_NAME).Execute(),
-            complexDebugInformation)
+            (path, assetsNaming.START_CASTING_STATE_COMMAND_NAME).Execute())
 
             //Create stop casting asset
             && CollectionsTools.dictionaryTools.AddValue(tempDictionary, assetsNaming.STOP_CASTING_STATE_COMMAND_NAME,
             new CreatePersistentScriptableObjectCommand<StopCastingStateCommand>
-            (complexDebugInformation.
-            AddTempCustomText("couldnt create " + assetsNaming.STOP_CASTING_STATE_COMMAND_NAME),
-            path, assetsNaming.STOP_CASTING_STATE_COMMAND_NAME).Execute(),
-            complexDebugInformation);
+            (path, assetsNaming.STOP_CASTING_STATE_COMMAND_NAME).Execute());
 
             //Set on final dictionary values
             if (couldntCreateAssets)
